@@ -8,172 +8,96 @@
   const money = n => 'P ' + Number(n || 0).toFixed(2);
   const safe = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   let mode = 'login', currentUser = null, tasks = [], submissions = [], transactions = [], profile = null, filter = 'all';
-
-  function toast(message) {
-    $('toast').textContent = message;
-    $('toast').classList.add('show');
-    window.setTimeout(() => $('toast').classList.remove('show'), 2600);
-  }
-  function authMessage(message, error) {
-    $('authMessage').textContent = message;
-    $('authMessage').classList.toggle('error', !!error);
-  }
+  function toast(message) { $('toast').textContent = message; $('toast').classList.add('show'); window.setTimeout(() => $('toast').classList.remove('show'), 2600); }
+  function authMessage(message, error) { $('authMessage').textContent = message; $('authMessage').classList.toggle('error', !!error); }
   function setMode(next) {
-    mode = next;
-    $('loginTab').classList.toggle('active', mode === 'login');
-    $('signupTab').classList.toggle('active', mode === 'signup');
-    $('nameField').hidden = mode !== 'signup';
-    $('displayName').required = mode === 'signup';
+    mode = next; $('loginTab').classList.toggle('active', mode === 'login'); $('signupTab').classList.toggle('active', mode === 'signup');
+    $('nameField').hidden = mode !== 'signup'; $('displayName').required = mode === 'signup';
     $('authSubmit').textContent = mode === 'login' ? 'Sign in' : 'Create account';
     $('password').autocomplete = mode === 'login' ? 'current-password' : 'new-password';
     authMessage(mode === 'login' ? 'Sign in to access live tasks and your wallet.' : 'Create your free EarnLoop account with an email address.');
   }
   $('loginTab').addEventListener('click', () => setMode('login'));
   $('signupTab').addEventListener('click', () => setMode('signup'));
-
   $('authForm').addEventListener('submit', async event => {
     event.preventDefault();
-    const email = $('email').value.trim().toLowerCase();
-    const password = $('password').value;
-    const name = $('displayName').value.trim();
-    const button = $('authSubmit');
-    button.disabled = true;
-    button.textContent = mode === 'login' ? 'Signing in…' : 'Creating account…';
+    const email = $('email').value.trim().toLowerCase(), password = $('password').value, name = $('displayName').value.trim(), button = $('authSubmit');
+    button.disabled = true; button.textContent = mode === 'login' ? 'Signing in…' : 'Creating account…';
     try {
       if (mode === 'signup') {
         const redirect = window.location.origin + window.location.pathname;
-        const result = await client.auth.signUp({
-          email, password,
-          options: { data: { display_name: name }, emailRedirectTo: redirect }
-        });
+        const result = await client.auth.signUp({email, password, options:{data:{display_name:name},emailRedirectTo:redirect}});
         if (result.error) throw result.error;
-        if (result.data.session) {
-          currentUser = result.data.user;
-          await showApp();
-        } else {
-          authMessage('Account created. Check ' + email + ' for the confirmation link, then return here to sign in.');
-          setMode('login');
-          $('email').value = email;
-        }
+        if (result.data.session) { currentUser = result.data.user; await showApp(); }
+        else { authMessage('Account created. Check ' + email + ' for the confirmation link, then return here to sign in.'); setMode('login'); $('email').value = email; }
       } else {
-        const result = await client.auth.signInWithPassword({ email, password });
+        const result = await client.auth.signInWithPassword({email,password});
         if (result.error) throw result.error;
-        currentUser = result.data.user;
-        await showApp();
+        currentUser = result.data.user; await showApp();
       }
-    } catch (error) {
-      authMessage(error.message || 'Unable to complete authentication. Please try again.', true);
-    } finally {
-      button.disabled = false;
-      button.textContent = mode === 'login' ? 'Sign in' : 'Create account';
-    }
+    } catch (error) { authMessage(error.message || 'Unable to complete authentication. Please try again.', true); }
+    finally { button.disabled = false; button.textContent = mode === 'login' ? 'Sign in' : 'Create account'; }
   });
-
   async function loadData() {
-    const userId = currentUser.id;
+    const uid = currentUser.id;
     const results = await Promise.all([
-      client.from('profiles').select('display_name,phone').eq('id', userId).maybeSingle(),
+      client.from('profiles').select('display_name,phone').eq('id',uid).maybeSingle(),
       client.from('tasks').select('id,title,description,category,reward_amount,currency,instructions,proof_requirements,ends_at').eq('status','active').order('created_at',{ascending:false}),
-      client.from('task_submissions').select('id,task_id,status,created_at,note,rejection_reason').eq('user_id',userId).order('created_at',{ascending:false}),
-      client.from('wallet_transactions').select('id,amount,currency,transaction_type,description,created_at').eq('user_id',userId).order('created_at',{ascending:false})
+      client.from('task_submissions').select('id,task_id,status,created_at,note,rejection_reason').eq('user_id',uid).order('created_at',{ascending:false}),
+      client.from('wallet_transactions').select('id,amount,currency,transaction_type,description,created_at').eq('user_id',uid).order('created_at',{ascending:false})
     ]);
-    if (results[0].error) throw results[0].error;
-    if (results[1].error) throw results[1].error;
-    if (results[2].error) throw results[2].error;
-    if (results[3].error) throw results[3].error;
-    profile = results[0].data;
-    tasks = results[1].data || [];
-    submissions = results[2].data || [];
-    transactions = results[3].data || [];
+    results.forEach(r => { if (r.error) throw r.error; });
+    profile = results[0].data; tasks = results[1].data || []; submissions = results[2].data || []; transactions = results[3].data || [];
   }
-
   async function showApp() {
-    $('authPanel').hidden = true;
-    $('appPanel').hidden = false;
-    try {
-      await loadData();
-      render();
-    } catch (error) {
-      toast(error.message || 'Could not load your account data.');
-    }
+    $('authPanel').hidden = true; $('appPanel').hidden = false;
+    try { await loadData(); render(); } catch (error) { toast(error.message || 'Could not load your account data.'); }
   }
   function render() {
-    const balance = transactions.reduce((sum, item) => sum + Number(item.amount || 0), 0);
-    $('balance').textContent = money(balance);
+    $('balance').textContent = money(transactions.reduce((sum,item) => sum + Number(item.amount || 0),0));
     $('submitted').textContent = submissions.length;
     $('pending').textContent = submissions.filter(x => x.status === 'pending').length;
     $('approved').textContent = submissions.filter(x => x.status === 'approved').length;
     renderTasks();
   }
   function renderTasks() {
-    const root = $('taskCards');
-    const visible = tasks.filter(t => filter === 'all' || t.category === filter);
+    const root = $('taskCards'), visible = tasks.filter(t => filter === 'all' || t.category === filter);
     root.innerHTML = '';
-    if (!visible.length) {
-      root.innerHTML = '<div class="empty">No live tasks are available in this category yet. Check again later.</div>';
-      return;
-    }
+    if (!visible.length) { root.innerHTML = '<div class="empty">No live tasks are available in this category yet. Check again later.</div>'; return; }
     visible.forEach(task => {
-      const card = document.createElement('article');
-      card.className = 'task-card';
+      const card = document.createElement('article'); card.className = 'task-card';
       const icon = task.category === 'shopping' ? '🛒' : task.category === 'survey' ? '📝' : '🎁';
       card.innerHTML = '<div class="task-thumb">' + icon + '</div><div class="task-info"><span class="task-tag">' + safe(task.category) + ' · BWP</span><h3>' + safe(task.title) + '</h3><p>' + safe(task.description || '') + '</p><div class="task-bottom"><span class="reward">+' + money(task.reward_amount) + '</span><button class="smallbtn" type="button">View task</button></div></div>';
-      card.querySelector('button').addEventListener('click', () => openTask(task.id));
-      root.appendChild(card);
+      card.querySelector('button').addEventListener('click', () => openTask(task.id)); root.appendChild(card);
     });
   }
   document.querySelectorAll('.filter').forEach(button => button.addEventListener('click', () => {
-    document.querySelectorAll('.filter').forEach(item => item.classList.remove('active'));
-    button.classList.add('active');
-    filter = button.dataset.filter;
-    renderTasks();
+    document.querySelectorAll('.filter').forEach(item => item.classList.remove('active')); button.classList.add('active'); filter = button.dataset.filter; renderTasks();
   }));
-
   function openTask(id) {
-    const task = tasks.find(item => item.id === id);
-    if (!task) return;
-    const alreadySubmitted = submissions.some(item => item.task_id === id && item.status !== 'rejected');
+    const task = tasks.find(item => item.id === id); if (!task) return;
+    const exists = submissions.some(item => item.task_id === id && item.status !== 'rejected');
     $('taskModalBody').innerHTML = '<div class="modal-content"><p class="eyebrow">' + safe(task.category) + ' TASK</p><h2>' + safe(task.title) + '</h2><p>' + safe(task.description || '') + '</p><div class="notice"><b>Instructions</b><br>' + safe(task.instructions || 'Complete the task as described by the sponsor.') + '<br><br><b>Evidence required</b><br>' + safe(task.proof_requirements || 'Upload a clear photo of your evidence.') + '<br><br><b>Reward:</b> ' + money(task.reward_amount) + ' after approval.</div>' +
-      (alreadySubmitted ? '<p class="notice">You already have a submission for this task. Check your profile for its review status.</p>' :
-      '<form id="proofForm"><label class="formlabel" for="proofNote">Note (optional)</label><textarea class="textarea" id="proofNote" maxlength="1000"></textarea><label class="formlabel" for="proofFile">Evidence photo</label><input class="input" id="proofFile" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" required><p class="subtle">Private upload · JPEG, PNG or WebP · maximum 3 MB. Avoid uploading payment card details or unrelated personal documents.</p><button class="primary" id="proofSubmit">Submit proof for review</button></form>') + '</div>';
-    $('taskModal').showModal();
-    if (!alreadySubmitted) $('proofForm').addEventListener('submit', event => submitProof(event, task));
+      (exists ? '<p class="notice">You already have a submission for this task. Check your profile for its review status.</p>' :
+      '<form id="proofForm"><label class="formlabel" for="proofNote">Note (optional)</label><textarea class="textarea" id="proofNote" maxlength="1000"></textarea><label class="formlabel" for="proofFile">Evidence photo</label><input class="input" id="proofFile" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" required><p class="subtle">Private upload · JPEG, PNG or WebP · maximum 3 MB. Avoid sensitive documents.</p><button class="primary" id="proofSubmit">Submit proof for review</button></form>') + '</div>';
+    $('taskModal').showModal(); if (!exists) $('proofForm').addEventListener('submit', event => submitProof(event,task));
   }
-
-  async function submitProof(event, task) {
-    event.preventDefault();
-    const file = $('proofFile').files[0];
-    if (!file) return;
+  async function submitProof(event,task) {
+    event.preventDefault(); const file = $('proofFile').files[0]; if (!file) return;
     if (!['image/jpeg','image/png','image/webp'].includes(file.type)) { toast('Use a JPEG, PNG or WebP image.'); return; }
-    if (file.size > 3 * 1024 * 1024) { toast('Evidence must be 3 MB or smaller.'); return; }
-    const button = $('proofSubmit');
-    button.disabled = true;
-    button.textContent = 'Uploading securely…';
-    const submissionId = crypto.randomUUID();
-    const extension = file.type === 'image/jpeg' ? 'jpg' : file.type === 'image/png' ? 'png' : 'webp';
-    const path = currentUser.id + '/' + submissionId + '.' + extension;
+    if (file.size > 3*1024*1024) { toast('Evidence must be 3 MB or smaller.'); return; }
+    const button = $('proofSubmit'); button.disabled = true; button.textContent = 'Uploading securely…';
+    const sid = crypto.randomUUID(), ext = file.type === 'image/jpeg' ? 'jpg' : file.type === 'image/png' ? 'png' : 'webp', path = currentUser.id + '/' + sid + '.' + ext;
     try {
-      const upload = await client.storage.from(EVIDENCE_BUCKET).upload(path, file, { contentType: file.type, upsert: false });
-      if (upload.error) throw upload.error;
-      const insert = await client.from('task_submissions').insert({
-        id: submissionId, task_id: task.id, user_id: currentUser.id,
-        evidence_path: path, note: $('proofNote').value.trim()
-      });
+      const upload = await client.storage.from(EVIDENCE_BUCKET).upload(path,file,{contentType:file.type,upsert:false}); if (upload.error) throw upload.error;
+      const insert = await client.from('task_submissions').insert({id:sid,task_id:task.id,user_id:currentUser.id,evidence_path:path,note:$('proofNote').value.trim()});
       if (insert.error) throw insert.error;
-      $('taskModal').close();
-      await loadData();
-      render();
-      toast('Evidence submitted. Your task is now awaiting review.');
-    } catch (error) {
-      button.disabled = false;
-      button.textContent = 'Try submission again';
-      toast(error.message || 'Submission failed. Please try again.');
-    }
+      $('taskModal').close(); await loadData(); render(); toast('Evidence submitted. Awaiting review.');
+    } catch (error) { button.disabled = false; button.textContent = 'Try submission again'; toast(error.message || 'Submission failed. Please try again.'); }
   }
-
   function openWallet() {
-    const rows = transactions.map(item => '<div class="history-item"><span><b>' + safe(item.description || item.transaction_type) + '</b><br><small>' + new Date(item.created_at).toLocaleDateString() + '</small></span><b>' + (Number(item.amount) > 0 ? '+' : '') + money(item.amount) + '</b></div>').join('');
-    $('walletBody').innerHTML = '<div class="modal-content"><p class="eyebrow">YOUR WALLET</p><h2>' + $('balance').textContent + '</h2><p class="subtle">Balance calculated from your transaction ledger. Only approved rewards are credited.</p><h3>Wallet activity</h3>' + (rows || '<div class="empty">No wallet transactions yet. Approved task rewards will appear here.</div>') + '<p class="notice">Wallet entries are records of rewards, not a cash payout. Redemption will be added only after a supported payout process is implemented.</p></div>';
+    const rows = transactions.map(item => '<div class="history-item"><span><b>' + safe(item.description || item.transaction_type) + '</b><br><small>' + new Date(item.created_at).toLocaleDateString() + '</small></span><b>' + (Number(item.amount)>0?'+':'') + money(item.amount) + '</b></div>').join('');
+    $('walletBody').innerHTML = '<div class="modal-content"><p class="eyebrow">YOUR WALLET</p><h2>' + $('balance').textContent + '</h2><p class="subtle">Calculated from your transaction ledger. Approved rewards only.</p><h3>Wallet activity</h3>' + (rows || '<div class="empty">No wallet transactions yet.</div>') + '<p class="notice">This is a reward ledger, not a cash payout. Redemption will be added after a supported payout process is implemented.</p></div>';
     $('walletModal').showModal();
   }
   function openProfile() {
@@ -181,51 +105,18 @@
       const task = tasks.find(t => t.id === item.task_id);
       return '<div class="history-item"><span><b>' + safe(task ? task.title : 'Task submission') + '</b><br><small>' + new Date(item.created_at).toLocaleDateString() + (item.rejection_reason ? ' · ' + safe(item.rejection_reason) : '') + '</small></span><i class="status">' + safe(item.status) + '</i></div>';
     }).join('');
-    $('profileBody').innerHTML = '<div class="modal-content"><p class="eyebrow">YOUR ACCOUNT</p><h2>' + safe(profile && profile.display_name || currentUser.email) + '</h2><p class="subtle">' + safe(currentUser.email) + '</p><h3>My submissions</h3>' + (rows || '<p class="subtle">You have not submitted any tasks yet.</p>') + '<button class="primary" id="signOutBtn" type="button">Sign out</button></div>';
+    $('profileBody').innerHTML = '<div class="modal-content"><p class="eyebrow">YOUR ACCOUNT</p><h2>' + safe(profile && profile.display_name || currentUser.email) + '</h2><p class="subtle">' + safe(currentUser.email) + '</p><h3>My submissions</h3>' + (rows || '<p class="subtle">No submissions yet.</p>') + '<button class="primary" id="signOutBtn" type="button">Sign out</button></div>';
     $('profileModal').showModal();
-    $('signOutBtn').addEventListener('click', async () => {
-      const result = await client.auth.signOut();
-      if (result.error) { toast(result.error.message); return; }
-      $('profileModal').close();
-      currentUser = null;
-      $('appPanel').hidden = true;
-      $('authPanel').hidden = false;
-      authMessage('You have signed out.');
-    });
+    $('signOutBtn').addEventListener('click',async()=>{const result=await client.auth.signOut();if(result.error){toast(result.error.message);return;} $('profileModal').close();currentUser=null;$('appPanel').hidden=true;$('authPanel').hidden=false;authMessage('You have signed out.');});
   }
-
-  $('walletBtn').addEventListener('click', openWallet);
-  $('profileBtn').addEventListener('click', openProfile);
-  $('refreshTasks').addEventListener('click', async () => {
-    try { await loadData(); render(); toast('Tasks and account activity refreshed.'); }
-    catch (error) { toast(error.message || 'Refresh failed.'); }
-  });
-  $('allTasks').addEventListener('click', () => {});
-  document.querySelectorAll('[data-nav]').forEach(button => button.addEventListener('click', () => {
-    document.querySelectorAll('[data-nav]').forEach(item => item.classList.remove('active'));
-    button.classList.add('active');
-    if (button.dataset.nav === 'wallet' && currentUser) openWallet();
-    else if (button.dataset.nav === 'profile' && currentUser) openProfile();
-    else document.querySelector('.tasks').scrollIntoView({behavior:'smooth'});
+  $('walletBtn').addEventListener('click',openWallet);
+  $('profileBtn').addEventListener('click',openProfile);
+  $('refreshTasks').addEventListener('click',async()=>{try{await loadData();render();toast('Tasks and account activity refreshed.');}catch(error){toast(error.message||'Refresh failed.');}});
+  document.querySelectorAll('[data-nav]').forEach(button=>button.addEventListener('click',()=>{
+    document.querySelectorAll('[data-nav]').forEach(item=>item.classList.remove('active'));button.classList.add('active');
+    if(button.dataset.nav==='wallet'&&currentUser)openWallet();else if(button.dataset.nav==='profile'&&currentUser)openProfile();else document.querySelector('.tasks').scrollIntoView({behavior:'smooth'});
   }));
-
-  client.auth.onAuthStateChange((_event, session) => {
-    window.setTimeout(async () => {
-      currentUser = session ? session.user : null;
-      if (currentUser) await showApp();
-      else {
-        $('appPanel').hidden = true;
-        $('authPanel').hidden = false;
-      }
-    }, 0);
-  });
-  client.auth.getSession().then(({data, error}) => {
-    if (error) { authMessage(error.message, true); return; }
-    currentUser = data.session ? data.session.user : null;
-    if (currentUser) showApp();
-    else setMode('login');
-  });
-  if ('serviceWorker' in navigator && location.protocol === 'https:') {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
-  }
+  client.auth.onAuthStateChange((_event,session)=>{window.setTimeout(async()=>{currentUser=session?session.user:null;if(currentUser)await showApp();else{$('appPanel').hidden=true;$('authPanel').hidden=false;}},0);});
+  client.auth.getSession().then(({data,error})=>{if(error){authMessage(error.message,true);return;}currentUser=data.session?data.session.user:null;if(currentUser)showApp();else setMode('login');});
+  if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(()=>{});
 })();
