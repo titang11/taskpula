@@ -110,7 +110,7 @@
     $('signOutBtn').addEventListener('click',async()=>{const result=await client.auth.signOut();if(result.error){toast(result.error.message);return;} $('profileModal').close();currentUser=null;$('appPanel').hidden=true;$('authPanel').hidden=false;authMessage('You have signed out.');});
   }
   $('walletBtn').addEventListener('click',openWallet);
-  $('profileBtn').addEventListener('click',openProfile);
+  $('profileBtn').addEventListener('click',()=>{if(currentUser)openProfile();else $('authPanel').scrollIntoView({behavior:'smooth'});});
   $('refreshTasks').addEventListener('click',async()=>{try{await loadData();render();toast('Tasks and account activity refreshed.');}catch(error){toast(error.message||'Refresh failed.');}});
   document.querySelectorAll('[data-nav]').forEach(button=>button.addEventListener('click',()=>{
     document.querySelectorAll('[data-nav]').forEach(item=>item.classList.remove('active'));button.classList.add('active');
