@@ -39,7 +39,7 @@ begin
     rejection_reason=case when p_decision='rejected' then nullif(trim(p_rejection_reason),'') else null end
   where id=p_submission_id;
   insert into private.audit_log(actor_id,action,entity_type,entity_id,details)
-  values((select auth.uid()),'submission_'||p_decision,'task_submission",p_submission_id,
+  values((select auth.uid()),'submission_'||p_decision,'task_submission',p_submission_id,
     jsonb_build_object('task_id',v_submission.task_id,'reward',case when p_decision='approved' then v_task.reward_amount else 0 end));
   return jsonb_build_object('submission_id',p_submission_id,'status',p_decision);
 end;
@@ -55,6 +55,7 @@ returns jsonb language plpgsql security definer set search_path=''
 as $function$
 begin
  if (select auth.uid()) is null then raise exception 'Authentication required'; end if;
+ if not private.is_staff() then raise exception 'Not authorized'; end if;
  return private.review_submission(p_submission_id,p_decision,p_rejection_reason);
 end;
 $function$;
