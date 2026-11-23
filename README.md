@@ -1,19 +1,30 @@
 # EarnLoop BW
 
-EarnLoop BW is a Botswana-first rewards-task platform prototype. Members discover sponsor promotions, complete tasks, upload photo evidence and receive rewards after review.
+EarnLoop BW is a Botswana-first task and rewards platform. Members create an account, discover sponsor tasks, complete the task, upload private photo evidence and receive a wallet-ledger credit only after staff approval.
 
-## Current frontend prototype
-- Blue responsive interface for mobile and desktop.
-- Featured grocery promotion with an illustrative P8 reward.
-- Task category filters and instructions.
-- Photo evidence upload with a 3 MB limit and optional note.
-- Local demo profile, submission history and wallet display.
-- Basic web-app manifest and offline cache.
+## Connected MVP
+- Supabase email/password authentication with email confirmation.
+- Profile creation linked to the authenticated account.
+- Live task listing from the EarnLoop BW database (no seeded or simulated offers).
+- Private evidence uploads to the `task-evidence` bucket (JPEG, PNG or WebP; maximum 3 MB).
+- Task submissions recorded for review.
+- Submission status and wallet transactions read from the database.
+- Wallet balance calculated from ledger transactions; no fake balance or local demo wallet.
+- Responsive blue interface and installable web-app shell.
 
-## Important limitations
-This is a frontend demonstration only. Data is stored in the visitor's browser, does not sync between devices and cannot be reviewed by staff. The wallet is not real money and cannot be redeemed. The sample task is illustrative, not a live sponsor offer.
+## Security
+- Frontend uses only the Supabase publishable key.
+- Evidence storage is private and controlled by Storage RLS.
+- Database RLS controls profile, task, submission and wallet access.
+- Rewards are credited through the protected review workflow, not from the browser.
+- Never add service-role keys, passwords or payment secrets to this repository.
 
-Before launch, connect secure authentication and backend services, sponsor/task management, server-side evidence storage, reviewer approval, fraud controls, referral attribution, audit logs and a compliant payout provider. Never put service-role keys or payment secrets in frontend code.
+## Current limitations
+- The task list will remain empty until an authorized staff member creates and activates a sponsor task.
+- Staff review/admin screens are not yet included in this frontend.
+- Wallet entries are accounting records only. Cash-out and payout-provider integration are not enabled.
+- Referral attribution, sponsor self-service, fraud analytics and production monitoring remain future work.
+- Keep the Supabase project on the free tier; provider limits and pricing can change, so do not enable paid services without explicit approval.
 
 ## Deploy
-Enable GitHub Pages from the main branch and repository root. Open the published site over HTTPS.
+GitHub Pages should publish the `main` branch from the repository root over HTTPS. Update Supabase Authentication Site URL and redirect allow-list whenever the GitHub Pages repository name changes.
