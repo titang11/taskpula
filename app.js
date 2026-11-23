@@ -29,7 +29,7 @@
         const result = await client.auth.signUp({email, password, options:{data:{display_name:name},emailRedirectTo:redirect}});
         if (result.error) throw result.error;
         if (result.data.session) { currentUser = result.data.user; await showApp(); }
-        else { authMessage('Account created. Check ' + email + ' for the confirmation link, then return here to sign in.'); setMode('login'); $('email').value = email; }
+        else { setMode('login'); $('email').value = email; authMessage('Account created. Check ' + email + ' for the confirmation link, then return here to sign in.'); }
       } else {
         const result = await client.auth.signInWithPassword({email,password});
         if (result.error) throw result.error;
