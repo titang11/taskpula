@@ -1,11 +1,11 @@
-# EarnLoop BW
+# TaskPula
 
-EarnLoop BW is a Botswana-first task and rewards platform. Members create an account, discover sponsor tasks, complete the task, upload private photo evidence and receive a wallet-ledger credit only after staff approval.
+TaskPula is a Botswana-first task and rewards platform. Members create an account, discover sponsor tasks, complete the task, upload private photo evidence and receive a wallet-ledger credit only after staff approval.
 
 ## Connected MVP
 - Supabase email/password authentication with email confirmation.
 - Profile creation linked to the authenticated account.
-- Live task listing from the EarnLoop BW database (no seeded or simulated offers).
+- Live task listing from the TaskPula database (no seeded or simulated offers).
 - Private evidence uploads to the `task-evidence` bucket (JPEG, PNG or WebP; maximum 3 MB).
 - Task submissions recorded for review.
 - Admin-managed sponsor directory with company, contact and industry details.
