@@ -15,7 +15,7 @@
     $('nameField').hidden = mode !== 'signup'; $('displayName').required = mode === 'signup';
     $('authSubmit').textContent = mode === 'login' ? 'Sign in' : 'Create account';
     $('password').autocomplete = mode === 'login' ? 'current-password' : 'new-password';
-    authMessage(mode === 'login' ? 'Sign in to access live tasks and your wallet.' : 'Create your free EarnLoop account with an email address.');
+    authMessage(mode === 'login' ? 'Sign in to access live tasks and your wallet.' : 'Create your free TaskPula account with an email address.');
   }
   $('loginTab').addEventListener('click', () => setMode('login'));
   $('signupTab').addEventListener('click', () => setMode('signup'));
