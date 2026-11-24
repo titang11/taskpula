@@ -7,11 +7,11 @@
   const $ = id => document.getElementById(id);
   const money = n => 'P ' + Number(n || 0).toFixed(2);
   const safe = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  let mode = 'login', currentUser = null, tasks = [], submissions = [], transactions = [], profile = null, filter = 'all';
+  let mode = 'login', recoveryMode = false, currentUser = null, tasks = [], submissions = [], transactions = [], profile = null, filter = 'all';
   function toast(message) { $('toast').textContent = message; $('toast').classList.add('show'); window.setTimeout(() => $('toast').classList.remove('show'), 2600); }
   function authMessage(message, error) { $('authMessage').textContent = message; $('authMessage').classList.toggle('error', !!error); }
   function setMode(next) {
-    mode = next; $('loginTab').classList.toggle('active', mode === 'login'); $('signupTab').classList.toggle('active', mode === 'signup');
+    recoveryMode = false; $('loginTab').hidden = false; $('signupTab').hidden = false; $('password').placeholder = ''; mode = next; $('loginTab').classList.toggle('active', mode === 'login'); $('signupTab').classList.toggle('active', mode === 'signup'); $('forgotPassword').hidden = mode !== 'login';
     $('nameField').hidden = mode !== 'signup'; $('displayName').required = mode === 'signup';
     $('authSubmit').textContent = mode === 'login' ? 'Sign in' : 'Create account';
     $('password').autocomplete = mode === 'login' ? 'current-password' : 'new-password';
@@ -19,12 +19,29 @@
   }
   $('loginTab').addEventListener('click', () => setMode('login'));
   $('signupTab').addEventListener('click', () => setMode('signup'));
+  $('forgotPassword').addEventListener('click', async () => {
+    const email = $('email').value.trim().toLowerCase();
+    if (!email) { authMessage('Enter your email address first, then choose Forgot password.', true); $('email').focus(); return; }
+    const button = $('forgotPassword'); button.disabled = true; button.textContent = 'Sending reset link…';
+    try {
+      const result = await client.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + window.location.pathname });
+      if (result.error) throw result.error;
+      authMessage('If an account exists for ' + email + ', a password reset link has been sent. Open it on this device, then enter your new password here.');
+    } catch (error) { authMessage(error.message || 'Could not send the reset email. Please try again.', true); }
+    finally { button.disabled = false; button.textContent = 'Forgot password?'; }
+  });
   $('authForm').addEventListener('submit', async event => {
     event.preventDefault();
     const email = $('email').value.trim().toLowerCase(), password = $('password').value, name = $('displayName').value.trim(), button = $('authSubmit');
     button.disabled = true; button.textContent = mode === 'login' ? 'Signing in…' : 'Creating account…';
     try {
-      if (mode === 'signup') {
+      if (recoveryMode) {
+        const result = await client.auth.updateUser({password});
+        if (result.error) throw result.error;
+        recoveryMode = false; $('password').value = ''; $('password').placeholder = '';
+        $('loginTab').hidden = false; $('signupTab').hidden = false; setMode('login');
+        authMessage('Your password has been updated. You can now sign in with your new password.');
+      } else if (mode === 'signup') {
         const redirect = window.location.origin + window.location.pathname;
         const result = await client.auth.signUp({email, password, options:{data:{display_name:name},emailRedirectTo:redirect}});
         if (result.error) throw result.error;
@@ -116,7 +133,20 @@
     document.querySelectorAll('[data-nav]').forEach(item=>item.classList.remove('active'));button.classList.add('active');
     if(button.dataset.nav==='wallet'&&currentUser)openWallet();else if(button.dataset.nav==='profile'&&currentUser)openProfile();else document.querySelector('.tasks').scrollIntoView({behavior:'smooth'});
   }));
-  client.auth.onAuthStateChange((_event,session)=>{window.setTimeout(async()=>{currentUser=session?session.user:null;if(currentUser)await showApp();else{$('appPanel').hidden=true;$('authPanel').hidden=false;}},0);});
+  client.auth.onAuthStateChange((event,session)=>{window.setTimeout(async()=>{
+    if (event === 'PASSWORD_RECOVERY') {
+      recoveryMode = true; currentUser = session?.user || null;
+      $('appPanel').hidden = true; $('authPanel').hidden = false;
+      $('loginTab').hidden = true; $('signupTab').hidden = true; $('nameField').hidden = true;
+      $('password').value = ''; $('password').placeholder = 'Enter your new password'; $('password').autocomplete = 'new-password';
+      $('authSubmit').textContent = 'Save new password'; $('forgotPassword').hidden = true;
+      authMessage('Choose a new password with at least 8 characters, then tap Save new password.');
+      return;
+    }
+    currentUser=session?session.user:null;
+    if(currentUser) await showApp();
+    else {$('appPanel').hidden=true;$('authPanel').hidden=false;}
+  },0);});
   client.auth.getSession().then(({data,error})=>{if(error){authMessage(error.message,true);return;}currentUser=data.session?data.session.user:null;if(currentUser)showApp();else setMode('login');});
   if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(()=>{});
 })();
