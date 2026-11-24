@@ -47,3 +47,37 @@
 .admin-note{font-size:10px;color:var(--muted);line-height:1.5}
 .admin-empty{background:white;border:1px dashed #cbd7e6;border-radius:13px;padding:22px;text-align:center;font-size:12px;color:var(--muted)}
 @media(min-width:600px){.admin-panel{margin-left:22px;margin-right:22px;padding:20px}.admin-metrics{grid-template-columns:repeat(4,1fr)}}
+
+/* TaskPula identity refresh — Botswana-rooted, mobile-first */
+:root{--blue:#0b4c91;--blue2:#1677c8;--sky:#e9f5fb;--ink:#102a43;--muted:#637b91;--line:#d8e6ef;--green:#17865b;--gold:#e4b84f}
+body{background:#eaf2f7;color:var(--ink)}
+.shell{background:linear-gradient(180deg,#f7fbfe 0%,#eef5f9 55%,#f8fafc 100%);box-shadow:0 12px 48px rgba(10,45,80,.08)}
+.top{padding:20px 22px 16px}
+.brand{gap:11px;color:#102a43;font-weight:850;letter-spacing:-.5px}
+.brand .mark.taskpula-mark{width:43px;height:43px;border-radius:14px;background:linear-gradient(145deg,#0b4c91,#1685c7);color:#fff;display:grid;place-items:center;font-size:14px;font-weight:900;letter-spacing:-1px;box-shadow:0 7px 18px rgba(11,76,145,.23);border:2px solid rgba(255,255,255,.75)}
+.taskpula-word{font-size:20px;line-height:1.05}
+.taskpula-word .blue{color:#1677c8}
+.taskpula-word small{display:block;margin-top:5px;font-size:8px;letter-spacing:1.2px;font-weight:800;color:#668096}
+.hero{margin:10px 16px 20px;padding:26px 23px;border-radius:26px;background:radial-gradient(circle at 88% 15%,rgba(228,184,79,.28),transparent 34%),linear-gradient(135deg,#073b72 0%,#0b5ba5 56%,#1686c5 100%);color:#fff;box-shadow:0 16px 32px rgba(11,76,145,.18);overflow:hidden;position:relative}
+.hero .eyebrow{color:#d7edff;letter-spacing:1.8px}
+.hero h1{font-size:clamp(34px,8vw,48px);line-height:1.02;letter-spacing:-1.8px;margin:10px 0 12px}
+.hero h1 em{color:#f3cd70;font-style:normal}
+.hero p:not(.eyebrow){color:#e3f2ff;max-width:310px;line-height:1.55}
+.hero-art{opacity:.92}
+.hero-art .coin{background:linear-gradient(145deg,#f8d77e,#dca83b);color:#164a79;font-weight:900;box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.auth-panel,.wallet,.tasks,.how,.stats{border:1px solid rgba(190,211,226,.7);box-shadow:0 8px 24px rgba(19,57,87,.045)}
+.auth-panel{border-radius:22px;margin:0 16px 20px}
+.wallet{border-radius:22px;background:linear-gradient(130deg,#0c4b86,#1267a9);color:#fff;margin:16px}
+.wallet .subtle,.wallet .wallet-sub{color:#d7eaff}
+.stats{margin:0 16px 22px;border-radius:18px;background:#fff}
+.tasks,.how{margin:0 16px 22px;border-radius:22px;padding:19px;background:#fff}
+.primary,.filter.active,.admin-tab.active{background:linear-gradient(135deg,#0b4c91,#1677c8)}
+.primary{box-shadow:0 8px 18px rgba(11,76,145,.2)}
+.bottom{background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-top:1px solid #dce8ef}
+.bottom button.active{color:#0b67ae}
+.bottom button{color:#6c8295}
+.admin-panel{background:#f4f8fb}
+.admin-top{background:linear-gradient(130deg,#083d73,#0b66aa);color:#fff;border-radius:22px;padding:22px;margin:12px 16px}
+.admin-top .eyebrow,.admin-top .admin-note{color:#d7eaff}
+.admin-back{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff}
+@media(min-width:700px){.shell{border-radius:0 0 28px 28px}.hero{margin-top:18px}}
