@@ -41,7 +41,6 @@ async function loadData(){
  db.from('campaigns').select('id,name,objective,budget_cap,status,starts_at,ends_at').eq('sponsor_id',sponsor.id).order('created_at',{ascending:false}),
  db.from('campaign_requests').select('id,campaign_name,proposed_budget,status,admin_note,created_at').eq('sponsor_id',sponsor.id).order('created_at',{ascending:false}),
  db.from('campaign_funding').select('campaign_id,amount,entry_type,status,reference_note,created_at').eq('sponsor_id',sponsor.id).order('created_at',{ascending:false}),
- db.from('tasks').select('id,campaign_id,title,status,reward_amount,budget_amount').in('campaign_id',(campaigns.map(x=>x.id).length?campaigns.map(x=>x.id):['00000000-0000-0000-0000-000000000000']))
  ]);
  if(c.error||r.error||f.error){notice((c.error||r.error||f.error).message,true);return;}
  campaigns=c.data||[];requests=r.data||[];funding=f.data||[];
