@@ -44,8 +44,8 @@ create index if not exists campaign_requests_sponsor_created_idx
 alter table public.sponsor_memberships enable row level security;
 alter table public.campaign_requests enable row level security;
 
-grant select, insert on public.sponsor_memberships to authenticated;
-grant select, insert on public.campaign_requests to authenticated;
+grant select, insert, update, delete on public.sponsor_memberships to authenticated;
+grant select, insert, update on public.campaign_requests to authenticated;
 grant select, insert on public.sponsors to authenticated;
 grant select on public.campaigns, public.campaign_funding, public.tasks to authenticated;
 
@@ -54,16 +54,29 @@ create policy "client read own sponsor memberships"
 on public.sponsor_memberships for select to authenticated
 using (user_id = (select auth.uid()) or private.is_staff());
 
+create or replace function private.can_create_sponsor_membership(p_sponsor_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $
+  select exists (
+    select 1 from public.sponsors s
+    where s.id = p_sponsor_id
+      and s.created_by = (select auth.uid())
+  );
+$;
+revoke all on function private.can_create_sponsor_membership(uuid) from public, anon;
+grant execute on function private.can_create_sponsor_membership(uuid) to authenticated;
+
 drop policy if exists "client create own sponsor owner membership" on public.sponsor_memberships;
 create policy "client create own sponsor owner membership"
 on public.sponsor_memberships for insert to authenticated
 with check (
   user_id = (select auth.uid())
   and role = 'owner'
-  and exists (
-    select 1 from public.sponsors s
-    where s.id = sponsor_id and s.created_by = (select auth.uid())
-  )
+  and private.can_create_sponsor_membership(sponsor_id)
 );
 
 drop policy if exists "staff manage sponsor memberships" on public.sponsor_memberships;
