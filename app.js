@@ -4,6 +4,8 @@
   const SUPABASE_KEY = 'sb_publishable_7JZSxUeUm6nO2VQA16Wnkw_Oo_gxvhZ';
   const EVIDENCE_BUCKET = 'task-evidence';
   const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  // Share one Supabase client across the member app and admin dashboard.
+  window.taskPulaSupabase = client;
   const $ = id => document.getElementById(id);
   const money = n => 'P ' + Number(n || 0).toFixed(2);
   const safe = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
