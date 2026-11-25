@@ -1,6 +1,7 @@
 (function(){
 'use strict';
-const db=window.supabase.createClient('https://vmzsjkoandjqlzjvckqj.supabase.co','sb_publishable_7JZSxUeUm6nO2VQA16Wnkw_Oo_gxvhZ');
+const db=window.taskPulaSupabase;
+if(!db){console.error('TaskPula Supabase client was not initialized before admin.js.');return;}
 const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])), money=n=>'P '+Number(n||0).toFixed(2);
 let user=null,admin=false,tab='overview',tasks=[],subs=[],profiles=[],ledger=[],sponsors=[],campaigns=[],funding=[],providers=[];
 function msg(s){const n=$('adminNotice');if(n){n.textContent=s;n.hidden=false;}}
