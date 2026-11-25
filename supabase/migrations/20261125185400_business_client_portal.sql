@@ -47,6 +47,7 @@ alter table public.campaign_requests enable row level security;
 grant select, insert, update, delete on public.sponsor_memberships to authenticated;
 grant select, insert, update on public.campaign_requests to authenticated;
 grant select, insert on public.sponsors to authenticated;
+grant usage on schema private to authenticated;
 grant select on public.campaigns, public.campaign_funding, public.tasks to authenticated;
 
 drop policy if exists "client read own sponsor memberships" on public.sponsor_memberships;
@@ -94,7 +95,8 @@ drop policy if exists "client read own sponsor profile" on public.sponsors;
 create policy "client read own sponsor profile"
 on public.sponsors for select to authenticated
 using (
-  exists (
+  created_by = (select auth.uid())
+  or exists (
     select 1 from public.sponsor_memberships sm
     where sm.sponsor_id = sponsors.id and sm.user_id = (select auth.uid())
   )
