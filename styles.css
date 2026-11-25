@@ -178,3 +178,85 @@ body{background:radial-gradient(ellipse at 50% -20%,#dceef5 0,transparent 50%),#
 .admin-empty{border-color:#d4e4eb;background:#fff}
 @media(max-width:380px){.hero{padding:23px 19px;min-height:246px}.hero-art{right:-42px;opacity:.7}.hero h1{font-size:39px}.auth-panel{padding:16px}.stats{gap:6px}.stats>div{padding:12px 5px}}
 @media(min-width:600px){.hero{margin:0 22px 24px;padding:31px 30px}.auth-panel{margin-left:22px;margin-right:22px;padding:24px}.wallet,.stats{margin-left:22px;margin-right:22px}.tasks,.how{margin-left:22px;margin-right:22px;padding:22px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-panel{margin-left:22px;margin-right:22px;padding:20px}}
+
+
+/* TaskPula UI refresh — responsive member and admin experience */
+:root{
+  --tp-navy:#092f50;--tp-blue:#0b5d91;--tp-cyan:#1594b8;--tp-gold:#e6bd59;
+  --tp-page:#f2f7fa;--tp-card:#ffffff;--tp-border:#dce8ef;
+  --tp-muted:#627b8d;--tp-shadow:0 14px 36px rgba(12,52,78,.08);
+}
+html{scroll-padding-top:90px}
+body{background:radial-gradient(ellipse at 12% 0%,#e0f0f7 0,transparent 38%),var(--tp-page)}
+.shell{max-width:1180px;min-height:100vh;margin:0 auto;background:linear-gradient(180deg,#f8fbfd 0%,#f0f6f9 100%);padding-bottom:100px}
+.top{position:sticky;top:0;z-index:8;padding:14px clamp(16px,3vw,34px);background:rgba(249,252,253,.88);backdrop-filter:blur(18px);border-bottom:1px solid #dfebf1}
+.brand .mark.taskpula-mark{width:48px;height:48px}
+.circle{width:44px;height:44px;cursor:pointer}
+.hero{margin:20px clamp(14px,2.5vw,30px) 24px;min-height:280px;padding:clamp(24px,4vw,44px);border:1px solid #ffffff20}
+.hero h1{font-size:clamp(42px,6vw,64px);max-width:560px}
+.hero p:not(.eyebrow){font-size:14px;max-width:420px}
+.hero-art{transform:scale(1.12);transform-origin:center right;right:clamp(10px,5vw,65px)}
+.auth-panel{max-width:540px;margin:28px auto 36px;padding:clamp(20px,3vw,30px);box-shadow:var(--tp-shadow)}
+.auth-panel .input{min-height:48px}
+.auth-panel .primary{min-height:48px}
+#appPanel{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+.wallet{margin:0 clamp(14px,2.5vw,30px) 14px;min-height:138px;padding:24px 26px}
+.stats{margin:0 clamp(14px,2.5vw,30px) 22px}
+.tasks,.how{margin-left:clamp(14px,2.5vw,30px);margin-right:clamp(14px,2.5vw,30px);padding:clamp(18px,2.5vw,28px)}
+.tasks{scroll-margin-top:90px}
+.task-card{grid-template-columns:100px minmax(0,1fr);min-height:140px;border-radius:18px;transition:transform .18s,box-shadow .18s,border-color .18s}
+.task-card:hover{transform:translateY(-2px);box-shadow:0 12px 26px #123c5714;border-color:#bdd8e6}
+.task-info{padding:16px}
+.task-info h3{font-size:15px}
+.task-info p{font-size:12px}
+.smallbtn,.admin-btn,.filter,.admin-tab,.wallet-link,.primary{cursor:pointer}
+.smallbtn{padding:10px 14px}
+.filter{padding:9px 15px}
+.steps>div{padding:17px;border-radius:17px}
+.bottom{width:min(1180px,100%);border:1px solid #dce8ef;border-bottom:0;border-radius:18px 18px 0 0;box-shadow:0 -8px 28px #123c570c}
+.bottom button{padding:5px 0}
+.admin-panel{margin:18px clamp(14px,2.5vw,30px) 30px;padding:clamp(16px,2.5vw,28px);border:0;background:transparent}
+.admin-top{margin:0 0 18px;padding:24px 26px;border-radius:22px;box-shadow:var(--tp-shadow)}
+.admin-tabs{padding:4px 0 10px}
+.admin-tab{padding:10px 16px}
+.admin-metric,.admin-card,.admin-submission{box-shadow:0 7px 22px rgba(12,52,78,.045)}
+.admin-card{padding:18px;border-radius:18px}
+.admin-field input,.admin-field select,.admin-field textarea{min-height:43px}
+.admin-btn{padding:10px 14px}
+:focus-visible{outline:3px solid #49a8ce!important;outline-offset:2px}
+button:disabled{opacity:.55;cursor:not-allowed}
+@media(min-width:760px){
+  .hero{min-height:300px}
+  #appPanel{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;column-gap:20px;padding:0 clamp(14px,2.5vw,30px)}
+  .wallet{grid-column:1/-1;margin:0 0 14px}
+  .stats{grid-column:1/-1;margin:0 0 22px}
+  .tasks{grid-column:1/-1;margin:0 0 18px;padding:24px}
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .how{grid-column:1/-1;margin:0 0 20px}
+  .steps{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .admin-panel{padding:0 clamp(14px,2.5vw,30px) 30px}
+  .admin-metrics{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(min-width:1040px){
+  .hero{min-height:330px}
+  .hero-art{right:10%;transform:scale(1.35)}
+  .cards{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .admin-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:420px){
+  .top{padding:12px 14px}
+  .taskpula-word{font-size:19px}
+  .taskpula-word small{font-size:7px;letter-spacing:1px}
+  .hero{min-height:235px;padding:22px 19px}
+  .hero-art{right:-55px;opacity:.5}
+  .hero p:not(.eyebrow){max-width:235px}
+  .wallet{padding:18px}
+  .wallet h2{font-size:29px}
+  .stats{gap:6px}
+  .stats>div{padding:12px 5px}
+  .stats small{font-size:8px}
+  .admin-form-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
