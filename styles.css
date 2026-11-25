@@ -260,3 +260,52 @@ button:disabled{opacity:.55;cursor:not-allowed}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
 }
+
+
+/* Founder-approved palette direction: blue + confident red + warm wood */
+:root{
+  --tp-navy:#102f4b;
+  --tp-blue:#155b91;
+  --tp-cyan:#4b91b5;
+  --tp-red:#b83b3b;
+  --tp-red-dark:#922d32;
+  --tp-wood:#a87950;
+  --tp-wood-light:#ead8c4;
+  --tp-wood-pale:#f6eee5;
+  --tp-gold:#a87950;
+  --tp-page:#f5f1ec;
+  --tp-card:#fffdfb;
+  --tp-border:#e5d8ca;
+  --tp-muted:#74685e;
+  --tp-shadow:0 14px 36px rgba(55,42,31,.09);
+}
+body{background:radial-gradient(ellipse at 10% 0%,#e6edf2 0,transparent 38%),var(--tp-page)}
+.shell{background:linear-gradient(180deg,#fcfaf7 0%,#f4eee7 100%)}
+.top{background:rgba(252,250,247,.91);border-bottom-color:var(--tp-border)}
+.hero{background:linear-gradient(118deg,#102f4b 0%,#155b91 60%,#276e9b 100%)}
+.hero .eyebrow{color:#ead8c4}
+.hero .primary,.auth-panel .primary,.primary,.admin-btn:not(.secondary){
+  background:linear-gradient(115deg,var(--tp-red-dark),var(--tp-red));
+  border-color:var(--tp-red);
+}
+.hero .primary:hover,.auth-panel .primary:hover,.primary:hover,.admin-btn:not(.secondary):hover{filter:brightness(1.07)}
+.wallet{background:linear-gradient(120deg,#102f4b 0%,#155b91 72%,#a87950 150%);border:1px solid #ffffff20}
+.wallet .wallet-link{color:#f1d8c1}
+.stats>div,.tasks,.how,.auth-panel,.admin-card,.admin-metric,.admin-submission{
+  background:var(--tp-card);border-color:var(--tp-border)
+}
+.task-card{border-color:var(--tp-border);background:#fffdfb}
+.task-card:hover{border-color:#c69b77}
+.filter.active,.admin-tab.active{background:linear-gradient(120deg,#155b91,#287ba9);color:#fff;border-color:#155b91}
+.filter{border-color:var(--tp-border)}
+.smallbtn{background:var(--tp-red);color:#fff;border-color:var(--tp-red)}
+.notice{background:var(--tp-wood-pale);border-color:#ddc3a8;color:#6c4b32}
+.steps>div{background:var(--tp-wood-pale);border:1px solid var(--tp-border)}
+.admin-panel{background:transparent}
+.admin-top{background:radial-gradient(circle at 90% 0,#ffffff20,transparent 35%),linear-gradient(125deg,#102f4b,#155b91 76%,#a87950)}
+.admin-metric b{color:var(--tp-blue)}
+.admin-btn.secondary,.admin-tab{background:#f3e8dc;color:#684b35;border-color:#e2cfbb}
+.bottom{background:rgba(255,253,251,.96);border-color:var(--tp-border)}
+.bottom button.active{color:var(--tp-red-dark)}
+.bottom button.active span{background:#f4e4e0}
+:focus-visible{outline-color:#b83b3b!important}
