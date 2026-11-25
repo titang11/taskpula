@@ -309,3 +309,53 @@ body{background:radial-gradient(ellipse at 10% 0%,#e6edf2 0,transparent 38%),var
 .bottom button.active{color:var(--tp-red-dark)}
 .bottom button.active span{background:#f4e4e0}
 :focus-visible{outline-color:#b83b3b!important}
+
+
+/* Audience journeys: participant/member and business customer */
+.audience-nav{display:flex;align-items:center;gap:clamp(10px,2vw,24px);margin-left:auto;margin-right:clamp(12px,2vw,26px)}
+.audience-nav a{font-size:12px;font-weight:800;color:#173f5e;text-decoration:none;padding:10px 12px;border-radius:999px}
+.audience-nav a:last-child{background:#f0e2d6;color:#704b32}
+.audience-nav a:hover{background:#e4edf3}
+.hero-actions,.business-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:22px}
+.hero-cta{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;padding:13px 18px;border-radius:12px;color:white;font-weight:800}
+.secondary-cta{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;padding:12px 16px;border:1px solid #ead8c4;border-radius:12px;color:#fff;font-size:12px;font-weight:800;background:#ffffff14}
+.auth-panel>.eyebrow{margin-bottom:8px}
+.auth-panel>h2{font-size:20px;line-height:1.25;letter-spacing:-.4px;margin:0 0 18px;color:#102f4b}
+.business-hub{margin:28px clamp(14px,2.5vw,30px) 34px;border:1px solid var(--tp-border);border-radius:26px;overflow:hidden;background:#fffdfb;box-shadow:var(--tp-shadow)}
+.business-intro{padding:clamp(25px,5vw,52px);background:linear-gradient(120deg,#102f4b,#155b91 72%,#a87950);color:#fff}
+.business-intro h2{font-size:clamp(30px,5vw,46px);line-height:1.08;letter-spacing:-1.4px;max-width:680px;margin:10px 0}
+.business-intro>p:not(.eyebrow){max-width:650px;color:#e5edf2;line-height:1.7;font-size:14px}
+.business-primary,.business-secondary{display:inline-flex;padding:12px 16px;border-radius:11px;text-decoration:none;font-size:12px;font-weight:850}
+.business-primary{background:#b83b3b;color:#fff}
+.business-secondary{border:1px solid #ffffff55;color:#fff}
+.business-services{padding:clamp(22px,4vw,38px)}
+.business-heading{max-width:660px;margin-bottom:22px}
+.business-heading h2,.business-process h2{font-size:clamp(24px,3.5vw,32px);color:#102f4b;margin:6px 0}
+.business-heading>p:last-child,.business-process>div>p:last-child{font-size:13px;color:#74685e;line-height:1.65}
+.business-service-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.business-service{padding:19px;border:1px solid #e5d8ca;border-radius:17px;background:linear-gradient(150deg,#fffdfb,#f8f1e9)}
+.business-service>span{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#e5edf3;color:#155b91;font-size:20px;font-weight:900}
+.business-service h3{font-size:16px;color:#102f4b;margin:15px 0 7px}
+.business-service p{font-size:12px;line-height:1.65;color:#74685e;min-height:58px}
+.business-service small{font-size:9px;letter-spacing:1.3px;font-weight:900;color:#a87950}
+.business-process{padding:clamp(22px,4vw,38px);background:#f6eee5;border-top:1px solid #e5d8ca}
+.business-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:22px}
+.business-steps article{padding:16px;border-radius:15px;background:#fffdfb;border:1px solid #e5d8ca}
+.business-steps article>b{font-size:12px;color:#b83b3b}
+.business-steps h3{font-size:13px;color:#102f4b;margin:10px 0 6px}
+.business-steps p{font-size:11px;line-height:1.6;color:#74685e}
+.business-note{padding:20px clamp(22px,4vw,38px);border-top:1px solid #e5d8ca}
+.business-note>b{color:#102f4b}
+.business-note p{font-size:12px;line-height:1.7;color:#74685e;max-width:850px}
+.business-note a{font-size:12px;font-weight:800;color:#155b91;text-decoration:none}
+@media(max-width:680px){
+ .top{flex-wrap:wrap}
+ .audience-nav{order:3;width:100%;margin:6px 0 0;justify-content:center;border-top:1px solid #e5d8ca;padding-top:7px}
+ .audience-nav a{flex:1;text-align:center;font-size:11px}
+ .business-service-grid{grid-template-columns:1fr}
+ .business-service p{min-height:0}
+ .business-steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .hero-actions{align-items:stretch}
+ .hero-cta,.secondary-cta{font-size:11px}
+}
+@media(max-width:390px){.business-steps{grid-template-columns:1fr}.business-intro{padding:24px 20px}}
