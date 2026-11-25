@@ -359,3 +359,43 @@ body{background:radial-gradient(ellipse at 10% 0%,#e6edf2 0,transparent 38%),var
  .hero-cta,.secondary-cta{font-size:11px}
 }
 @media(max-width:390px){.business-steps{grid-template-columns:1fr}.business-intro{padding:24px 20px}}
+
+/* Secure business client workspace */
+.client-portal{margin:0 clamp(14px,2.5vw,30px) 30px;padding:clamp(18px,3vw,30px);border:1px solid #e5d8ca;border-radius:22px;background:#f7f2ed}
+.client-portal-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:20px}
+.client-portal-head h2{font-size:clamp(23px,3vw,30px);color:#102f4b;margin:5px 0}
+.client-portal-head p:not(.eyebrow){font-size:12px;color:#74685e;line-height:1.6}
+.client-lock{font-size:9px;letter-spacing:.8px;font-weight:900;color:#155b91;background:#e4edf3;border-radius:999px;padding:9px 12px;white-space:nowrap}
+.client-auth-grid{display:grid;grid-template-columns:1fr minmax(260px,.8fr);gap:24px;align-items:center}
+.client-auth-grid h3,.client-form-card h3{font-size:19px;color:#102f4b;margin:7px 0}
+.client-auth-grid p,.client-form-card>p:not(.eyebrow){font-size:12px;line-height:1.65;color:#74685e}
+.client-auth-grid ul{padding-left:18px;color:#704b32;font-size:12px;line-height:2}
+.client-form,.client-form-card{display:grid;gap:13px}
+.client-form{padding:20px;border:1px solid #e5d8ca;border-radius:16px;background:#fffdfb}
+.client-form label{display:grid;gap:6px;font-size:11px;font-weight:800;color:#173f5e}
+.client-form input,.client-form textarea{width:100%;min-width:0;border:1px solid #d9cbbb;border-radius:9px;padding:11px;background:#fff;color:#253747;font:inherit;font-size:12px}
+.client-form input:focus,.client-form textarea:focus{outline:2px solid #155b9144;border-color:#155b91}
+.client-auth-actions{display:flex;gap:10px;flex-wrap:wrap}
+.client-auth-actions button,.client-form>button{border:0;cursor:pointer}
+.client-form .business-secondary{background:#fff;color:#704b32;border:1px solid #ead8c4}
+.client-hint{font-size:11px;line-height:1.6;color:#74685e}
+.client-form-card{padding:20px;border:1px solid #e5d8ca;border-radius:16px;background:#fffdfb}
+.client-two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.client-company-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:17px 20px;background:#102f4b;color:#fff;border-radius:15px}
+.client-company-bar h3{color:#fff;margin:4px 0}
+.client-company-bar small{font-size:11px;color:#e5edf2}
+.client-signout{border:1px solid #ffffff66;background:transparent;color:white;padding:9px 13px;border-radius:9px}
+.client-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0}
+.client-metrics>div{padding:16px;border:1px solid #e5d8ca;border-radius:13px;background:#fffdfb}
+.client-metrics b{display:block;font-size:19px;color:#155b91}
+.client-metrics small{font-size:10px;color:#74685e}
+.client-section-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.client-campaign,.client-request{padding:13px 0;border-bottom:1px solid #eadfd4}
+.client-campaign>div,.client-request>div{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.client-campaign b,.client-request b{font-size:12px;color:#173f5e}
+.client-status{font-size:9px;font-weight:900;text-transform:uppercase;color:#a33b3b;background:#f7e8e5;padding:5px 8px;border-radius:999px}
+.client-campaign p,.client-request p,.client-campaign small,.client-request small{font-size:10px;color:#74685e;line-height:1.5}
+.client-lower{margin-top:14px}
+.client-choice{display:flex;justify-content:space-between;width:100%;padding:14px;margin-top:9px;border:1px solid #e5d8ca;border-radius:10px;background:#fff;text-align:left;color:#173f5e;font-weight:800}
+.client-choice span{color:#155b91;font-size:11px}
+@media(max-width:680px){.client-auth-grid,.client-section-grid{grid-template-columns:1fr}.client-portal-head{align-items:flex-start;flex-direction:column}.client-metrics{grid-template-columns:1fr 1fr}.client-metrics>div:last-child{grid-column:1/-1}.client-two-col{grid-template-columns:1fr}}
