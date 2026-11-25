@@ -61,13 +61,13 @@ language sql
 stable
 security definer
 set search_path = ''
-as $
+as $function$
   select exists (
     select 1 from public.sponsors s
     where s.id = p_sponsor_id
       and s.created_by = (select auth.uid())
   );
-$;
+$function$;
 revoke all on function private.can_create_sponsor_membership(uuid) from public, anon;
 grant execute on function private.can_create_sponsor_membership(uuid) to authenticated;
 
