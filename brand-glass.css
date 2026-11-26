@@ -70,3 +70,26 @@ body{background:radial-gradient(ellipse at 12% 0%,#fff 0,transparent 38%),radial
 .error{color:#b42318}
 @media(max-width:640px){.shell{max-width:100%}.taskpula-logo{width:116px;height:71px}.audience-nav{display:none}.circle-showcase{grid-template-columns:1fr}.circle-levels{grid-template-columns:1fr 1fr}.circle-form{grid-template-columns:1fr}.circle-referral-form{align-items:stretch;flex-direction:column}.circle-referral-form .secondary-cta{min-height:44px}.hero{min-height:230px}.bottom{width:100%}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+
+/* Compact command-menu navigation and app-like glass surfaces */
+.menu-trigger{display:inline-flex;align-items:center;gap:10px;border:1px solid rgba(255,255,255,.92);border-radius:999px;padding:11px 17px;background:linear-gradient(135deg,rgba(255,255,255,.88),rgba(226,231,237,.72));color:#26384b;font-weight:850;font-size:12px;box-shadow:0 9px 26px rgba(35,48,64,.1);backdrop-filter:blur(18px);cursor:pointer;min-height:44px}
+.menu-trigger-icon{display:grid;gap:3px}.menu-trigger-icon i{display:block;width:16px;height:2px;border-radius:2px;background:#1768bd;transition:transform .25s,width .25s}.menu-trigger[aria-expanded=true] .menu-trigger-icon i:first-child{transform:translateY(5px) rotate(45deg)}.menu-trigger[aria-expanded=true] .menu-trigger-icon i:nth-child(2){opacity:0}.menu-trigger[aria-expanded=true] .menu-trigger-icon i:last-child{transform:translateY(-5px) rotate(-45deg)}
+.menu-scrim{position:fixed;inset:0;z-index:30;background:rgba(21,32,47,.26);backdrop-filter:blur(8px)}
+.command-menu{position:fixed;z-index:31;top:14px;right:14px;width:min(510px,calc(100vw - 28px));padding:22px;border:1px solid rgba(255,255,255,.86);border-radius:28px;background:linear-gradient(145deg,rgba(255,255,255,.94),rgba(235,239,244,.88));box-shadow:0 28px 90px rgba(23,39,59,.22);backdrop-filter:blur(30px);opacity:0;transform:translateY(-18px) scale(.96);pointer-events:none;transition:opacity .25s ease,transform .3s cubic-bezier(.2,.85,.25,1)}
+.command-menu.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+.command-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:20px}.command-head h2{font-size:clamp(21px,4vw,28px);letter-spacing:-.7px;margin:5px 0;color:#202a36}.command-head small{font-size:11px;color:#667484}.menu-close{width:42px;height:42px;border:1px solid #dce2e9;border-radius:50%;background:#fff;color:#344456;font-size:25px;cursor:pointer}
+.command-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.command-item{display:flex;align-items:center;gap:11px;min-width:0;min-height:82px;padding:13px;border:1px solid rgba(168,180,195,.35);border-radius:18px;background:rgba(255,255,255,.67);text-align:left;cursor:pointer;transition:transform .2s,border-color .2s,background .2s,box-shadow .2s}
+.command-item:hover,.command-item:focus-visible,.command-item.selected{transform:translateY(-2px);border-color:rgba(32,119,207,.42);background:rgba(255,255,255,.96);box-shadow:0 12px 28px rgba(31,92,151,.1);outline:none}
+.command-icon{display:grid;place-items:center;flex:0 0 39px;height:39px;border-radius:13px;background:linear-gradient(145deg,#fff,#dfe6ee);color:#176bc1;font-size:20px;box-shadow:inset 0 1px #fff}
+.command-item span:nth-child(2){display:grid;gap:4px;min-width:0}.command-item b{font-size:12px;color:#263648}.command-item small{font-size:9px;color:#748191;line-height:1.35}.command-item em{margin-left:auto;color:#7e91a6;font-style:normal}
+.command-foot{display:flex;justify-content:space-between;gap:10px;margin-top:17px;padding-top:13px;border-top:1px solid rgba(155,166,180,.25);font-size:8px;letter-spacing:.8px;font-weight:900;color:#7b8794}
+body.menu-open{overflow:hidden}
+[hidden]{display:none!important}
+main{min-height:60vh}
+.hero,.auth-panel,.business-hub,.wallet,.stats,.tasks,.how,.admin-panel,.client-portal,.circle-showcase{scroll-margin-top:90px}
+.business-service,.circle-levels article,.business-steps article,.client-form-card,.client-metrics>div,.admin-panel>*,.task-card{border-radius:20px;box-shadow:0 12px 32px rgba(33,48,66,.055)}
+.bottom{backdrop-filter:blur(22px);background:rgba(250,252,254,.84);border-top:1px solid rgba(158,170,184,.25)}
+@media(max-width:680px){.command-menu{top:8px;right:8px;width:calc(100vw - 16px);padding:17px;border-radius:23px}.command-grid{gap:8px}.command-item{min-height:76px;padding:10px}.command-item small{font-size:8px}.menu-trigger{padding:10px 13px}.top{flex-wrap:nowrap}.bottom{z-index:8}}
+@media(max-width:370px){.command-grid{grid-template-columns:1fr}.command-item{min-height:64px}}
