@@ -14,22 +14,20 @@ function setBusinessMode(mode){
  });
 }
 function show(view){
- const dashboardAvailable=!$('appPanel')?.hidden;
- const hero=document.querySelector('.hero'),auth=$('authPanel'),business=$('businessHub'),app=$('appPanel'),admin=$('adminPanel');
- topViews.forEach(id=>{const el=id==='hero'?hero:$(id);if(el)el.hidden=true;});
- if(view==='home'){hero.hidden=false;}
- if(view==='join'){auth.hidden=false;}
- if(view==='about'){business.hidden=false;setBusinessMode('all');}
- if(view==='dashboard'){
-   if(dashboardAvailable){app.hidden=false;}else{auth.hidden=false;document.getElementById('authMessage').textContent='Sign in to open your personal dashboard.';}
+ const hero=document.querySelector('.hero'),auth=$('authPanel'),business=$('businessHub'),app=$('appPanel'),admin=$('adminPanel'),circle=$('circlePage');
+ [hero,auth,business,app,admin,circle].forEach(el=>{if(el)el.hidden=true;});
+ if(view==='home'){if(hero)hero.hidden=false;}
+ else if(view==='join'){if(auth)auth.hidden=false;}
+ else if(view==='about'){if(business){business.hidden=false;setBusinessMode('overview');}}
+ else if(view==='circle'){if(!window.taskPulaHasSession){if(auth)auth.hidden=false;const m=$('authMessage');if(m)m.textContent='Sign in to manage your TaskPula Circle membership.';}else if(circle)circle.hidden=false;}
+ else if(['tasks','progress','wallet','profile','dashboard'].includes(view)){
+   if(!window.taskPulaHasSession||!app){if(auth)auth.hidden=false;const m=$('authMessage');if(m)m.textContent='Sign in to access your personal TaskPula workspace.';}
+   else{app.hidden=false;const target=view==='dashboard'?'tasks':view;const map={tasks:'tasksPage',progress:'progressPage',wallet:'walletPage',profile:'profilePage'};app.querySelectorAll('.member-page').forEach(page=>{page.hidden=page.id!==map[target];});}
  }
- if(view==='admin'){
-   const entry=$('adminEntry');
-   if(entry&&!entry.hidden&&admin){admin.hidden=false;}else{auth.hidden=false;document.getElementById('authMessage').textContent='Admin access requires an authorized staff account.';}
- }
+ else if(view==='admin'){const entry=$('adminEntry');if(entry&&!entry.hidden&&admin)admin.hidden=false;else{if(auth)auth.hidden=false;const m=$('authMessage');if(m)m.textContent='Admin access requires an authorized staff account.';}}
  document.querySelectorAll('.command-item').forEach(b=>b.classList.toggle('selected',b.dataset.view===view));
- closeMenu();
- window.scrollTo({top:0,behavior:'smooth'});
+ document.querySelectorAll('.bottom [data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));
+ closeMenu();window.scrollTo({top:0,behavior:'smooth'});
 }
 function openMenu(){menu.classList.add('open');scrim.hidden=false;trigger.setAttribute('aria-expanded','true');menu.setAttribute('aria-hidden','false');document.body.classList.add('menu-open');close.focus();}
 function closeMenu(){menu.classList.remove('open');scrim.hidden=true;trigger.setAttribute('aria-expanded','false');menu.setAttribute('aria-hidden','true');document.body.classList.remove('menu-open');}
@@ -45,12 +43,6 @@ document.querySelectorAll('[data-business-tab]').forEach(tab=>tab.addEventListen
  });
 }));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();});
-document.querySelectorAll('.bottom [data-nav]').forEach(b=>b.addEventListener('click',()=>{
- const view=b.dataset.nav;
- if(view==='home')show('home');
- else if(view==='tasks')show('dashboard');
- else if(view==='wallet'){show('dashboard');setTimeout(()=>$('walletBtn')?.click(),80);}
- else if(view==='profile')$('profileBtn')?.click();
-}));
+document.querySelectorAll('.bottom [data-nav]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.nav)));
 window.taskPulaNavigate=show;
 })();
