@@ -93,3 +93,16 @@ main{min-height:60vh}
 .bottom{backdrop-filter:blur(22px);background:rgba(250,252,254,.84);border-top:1px solid rgba(158,170,184,.25)}
 @media(max-width:680px){.command-menu{top:8px;right:8px;width:calc(100vw - 16px);padding:17px;border-radius:23px}.command-grid{gap:8px}.command-item{min-height:76px;padding:10px}.command-item small{font-size:8px}.menu-trigger{padding:10px 13px}.top{flex-wrap:nowrap}.bottom{z-index:8}}
 @media(max-width:370px){.command-grid{grid-template-columns:1fr}.command-item{min-height:64px}}
+
+
+/* Business content tabs: switch panels without long-page scrolling */
+.business-tabbar{position:sticky;top:82px;z-index:4;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 15px 16px;padding:7px;border:1px solid rgba(255,255,255,.88);border-radius:19px;background:rgba(247,249,251,.78);box-shadow:0 10px 28px rgba(35,48,64,.07);backdrop-filter:blur(22px)}
+.business-tab{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:10px 8px;border:1px solid transparent;border-radius:13px;background:transparent;color:#5b6877;font:800 11px/1.2 inherit;cursor:pointer;transition:background .2s,color .2s,box-shadow .2s}
+.business-tab span{font-size:15px;color:#176bc1}
+.business-tab.active{background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(222,230,239,.9));border-color:#fff;color:#155a9d;box-shadow:0 5px 18px rgba(29,75,120,.11)}
+.business-tab-panel[hidden]{display:none!important}
+.business-tab-panel{animation:tpPanelIn .22s ease both}
+@keyframes tpPanelIn{from{opacity:.45;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.business-hub{scroll-margin-top:100px}
+@media(max-width:420px){.business-tabbar{top:72px;gap:5px;padding:5px}.business-tab{gap:5px;font-size:10px;min-height:46px;padding:8px 4px}.business-tab span{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.business-tab-panel{animation:none}}
