@@ -4,11 +4,14 @@ const $=id=>document.getElementById(id);
 const trigger=$('menuTrigger'),menu=$('commandMenu'),scrim=$('menuScrim'),close=$('menuClose');
 if(!trigger||!menu||!scrim)return;
 const topViews=['hero','authPanel','businessHub','appPanel','adminPanel'];
-const businessParts=['business-intro','business-services','circle-showcase','business-process','client-portal','business-note'];
 function setBusinessMode(mode){
  const hub=$('businessHub');if(!hub)return;
- businessParts.forEach(cls=>hub.querySelectorAll('.'+cls).forEach(el=>{el.hidden=mode==='circle'?cls!=='circle-showcase':false;}));
- if(mode==='circle')$('taskpulaCircle')?.scrollIntoView({block:'start',behavior:'smooth'});
+ const chosen=mode==='circle'?'circle':'overview';
+ hub.querySelectorAll('[data-business-panel]').forEach(panel=>{panel.hidden=panel.dataset.businessPanel!==chosen;});
+ hub.querySelectorAll('[data-business-tab]').forEach(tab=>{
+   const active=tab.dataset.businessTab===chosen;
+   tab.classList.toggle('active',active);tab.setAttribute('aria-selected',String(active));
+ });
 }
 function show(view){
  const dashboardAvailable=!$('appPanel')?.hidden;
@@ -33,6 +36,14 @@ function openMenu(){menu.classList.add('open');scrim.hidden=false;trigger.setAtt
 function closeMenu(){menu.classList.remove('open');scrim.hidden=true;trigger.setAttribute('aria-expanded','false');menu.setAttribute('aria-hidden','true');document.body.classList.remove('menu-open');}
 trigger.addEventListener('click',openMenu);close.addEventListener('click',closeMenu);scrim.addEventListener('click',closeMenu);
 menu.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.view)));
+document.querySelectorAll('[data-business-tab]').forEach(tab=>tab.addEventListener('click',()=>{
+ const hub=$('businessHub');if(!hub)return;
+ const chosen=tab.dataset.businessTab;
+ hub.querySelectorAll('[data-business-panel]').forEach(panel=>{panel.hidden=panel.dataset.businessPanel!==chosen;});
+ hub.querySelectorAll('[data-business-tab]').forEach(item=>{
+   const active=item===tab;item.classList.toggle('active',active);item.setAttribute('aria-selected',String(active));
+ });
+}));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();});
 document.querySelectorAll('.bottom [data-nav]').forEach(b=>b.addEventListener('click',()=>{
  const view=b.dataset.nav;
