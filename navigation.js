@@ -19,8 +19,7 @@ function show(view){
  topViews.forEach(id=>{const el=id==='hero'?hero:$(id);if(el)el.hidden=true;});
  if(view==='home'){hero.hidden=false;}
  if(view==='join'){auth.hidden=false;}
- if(view==='business'){business.hidden=false;setBusinessMode('all');}
- if(view==='circle'){business.hidden=false;setBusinessMode('circle');}
+ if(view==='about'){business.hidden=false;setBusinessMode('all');}
  if(view==='dashboard'){
    if(dashboardAvailable){app.hidden=false;}else{auth.hidden=false;document.getElementById('authMessage').textContent='Sign in to open your personal dashboard.';}
  }
@@ -36,6 +35,7 @@ function openMenu(){menu.classList.add('open');scrim.hidden=false;trigger.setAtt
 function closeMenu(){menu.classList.remove('open');scrim.hidden=true;trigger.setAttribute('aria-expanded','false');menu.setAttribute('aria-hidden','true');document.body.classList.remove('menu-open');}
 trigger.addEventListener('click',openMenu);close.addEventListener('click',closeMenu);scrim.addEventListener('click',closeMenu);
 menu.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.view)));
+document.querySelectorAll('[data-open-view]').forEach(link=>link.addEventListener('click',e=>{e.preventDefault();show(link.dataset.openView);}));
 document.querySelectorAll('[data-business-tab]').forEach(tab=>tab.addEventListener('click',()=>{
  const hub=$('businessHub');if(!hub)return;
  const chosen=tab.dataset.businessTab;
