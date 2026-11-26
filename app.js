@@ -69,15 +69,23 @@
     profile = results[0].data; tasks = results[1].data || []; submissions = results[2].data || []; transactions = results[3].data || [];
   }
   async function showApp() {
-    $('authPanel').hidden = true; $('appPanel').hidden = false;
-    try { await loadData(); render(); } catch (error) { toast(error.message || 'Could not load your account data.'); }
+    $('authPanel').hidden = true; $('appPanel').hidden = false; window.taskPulaHasSession = true;
+    try { await loadData(); render(); window.taskPulaNavigate?.('tasks'); } catch (error) { toast(error.message || 'Could not load your account data.'); }
   }
   function render() {
     $('balance').textContent = money(transactions.reduce((sum,item) => sum + Number(item.amount || 0),0));
     $('submitted').textContent = submissions.length;
     $('pending').textContent = submissions.filter(x => x.status === 'pending').length;
     $('approved').textContent = submissions.filter(x => x.status === 'approved').length;
-    renderTasks();
+    renderTasks(); renderMemberPages();
+  }
+  function renderMemberPages() {
+    const walletRows=transactions.map(item=>'<div class="history-item"><span><b>'+safe(item.description||item.transaction_type)+'</b><br><small>'+new Date(item.created_at).toLocaleDateString()+'</small></span><b>'+(Number(item.amount)>0?'+':'')+money(item.amount)+'</b></div>').join('');
+    $('walletActivity').innerHTML=walletRows||'<div class="empty">No wallet transactions yet.</div>';
+    const progressRows=submissions.map(item=>{const task=tasks.find(t=>t.id===item.task_id);return '<div class="history-item"><span><b>'+safe(task?task.title:'Task submission')+'</b><br><small>'+new Date(item.created_at).toLocaleDateString()+(item.rejection_reason?' · '+safe(item.rejection_reason):'')+'</small></span><i class="status">'+safe(item.status)+'</i></div>';}).join('');
+    $('submissionHistory').innerHTML=progressRows||'<div class="empty">You have not submitted any activities yet.</div>';
+    $('profilePageBody').innerHTML='<div class="profile-summary"><div class="profile-avatar">♙</div><div><p class="eyebrow">TASKPULA ACCOUNT</p><h3>'+safe(profile&&profile.display_name||currentUser.email)+'</h3><p class="subtle">'+safe(currentUser.email)+'</p></div></div><div class="profile-details"><div><small>Display name</small><b>'+safe(profile&&profile.display_name||'Not set')+'</b></div><div><small>Phone</small><b>'+safe(profile&&profile.phone||'Not provided')+'</b></div></div><button class="primary profile-signout" id="signOutBtn" type="button">Sign out</button>';
+    $('signOutBtn').addEventListener('click',async()=>{const result=await client.auth.signOut();if(result.error){toast(result.error.message);return;}currentUser=null;window.taskPulaHasSession=false;$('appPanel').hidden=true;$('circlePage').hidden=true;$('authPanel').hidden=false;window.taskPulaNavigate?.('join');authMessage('You have signed out.');});
   }
   function renderTasks() {
     const root = $('taskCards'), visible = tasks.filter(t => filter === 'all' || t.category === filter);
@@ -114,27 +122,11 @@
       $('taskModal').close(); await loadData(); render(); toast('Evidence submitted. Awaiting review.');
     } catch (error) { button.disabled = false; button.textContent = 'Try submission again'; toast(error.message || 'Submission failed. Please try again.'); }
   }
-  function openWallet() {
-    const rows = transactions.map(item => '<div class="history-item"><span><b>' + safe(item.description || item.transaction_type) + '</b><br><small>' + new Date(item.created_at).toLocaleDateString() + '</small></span><b>' + (Number(item.amount)>0?'+':'') + money(item.amount) + '</b></div>').join('');
-    $('walletBody').innerHTML = '<div class="modal-content"><p class="eyebrow">YOUR WALLET</p><h2>' + $('balance').textContent + '</h2><p class="subtle">Calculated from your transaction ledger. Approved rewards only.</p><h3>Wallet activity</h3>' + (rows || '<div class="empty">No wallet transactions yet.</div>') + '<p class="notice">This is a reward ledger, not a cash payout. Redemption will be added after a supported payout process is implemented.</p></div>';
-    $('walletModal').showModal();
-  }
-  function openProfile() {
-    const rows = submissions.map(item => {
-      const task = tasks.find(t => t.id === item.task_id);
-      return '<div class="history-item"><span><b>' + safe(task ? task.title : 'Task submission') + '</b><br><small>' + new Date(item.created_at).toLocaleDateString() + (item.rejection_reason ? ' · ' + safe(item.rejection_reason) : '') + '</small></span><i class="status">' + safe(item.status) + '</i></div>';
-    }).join('');
-    $('profileBody').innerHTML = '<div class="modal-content"><p class="eyebrow">YOUR ACCOUNT</p><h2>' + safe(profile && profile.display_name || currentUser.email) + '</h2><p class="subtle">' + safe(currentUser.email) + '</p><h3>My submissions</h3>' + (rows || '<p class="subtle">No submissions yet.</p>') + '<button class="primary" id="signOutBtn" type="button">Sign out</button></div>';
-    $('profileModal').showModal();
-    $('signOutBtn').addEventListener('click',async()=>{const result=await client.auth.signOut();if(result.error){toast(result.error.message);return;} $('profileModal').close();currentUser=null;$('appPanel').hidden=true;$('authPanel').hidden=false;authMessage('You have signed out.');});
-  }
-  $('walletBtn').addEventListener('click',openWallet);
-  $('profileBtn').addEventListener('click',()=>{if(currentUser)openProfile();else $('authPanel').scrollIntoView({behavior:'smooth'});});
+  function openWallet(){window.taskPulaNavigate?.('wallet');}
+  function openProfile(){window.taskPulaNavigate?.('profile');}
+  $('walletBtn')?.addEventListener('click',openWallet);
+  $('profileBtn').addEventListener('click',()=>{if(currentUser)openProfile();else window.taskPulaNavigate?.('join');});
   $('refreshTasks').addEventListener('click',async()=>{try{await loadData();render();toast('Tasks and account activity refreshed.');}catch(error){toast(error.message||'Refresh failed.');}});
-  document.querySelectorAll('[data-nav]').forEach(button=>button.addEventListener('click',()=>{
-    document.querySelectorAll('[data-nav]').forEach(item=>item.classList.remove('active'));button.classList.add('active');
-    if(button.dataset.nav==='wallet'&&currentUser)openWallet();else if(button.dataset.nav==='profile'&&currentUser)openProfile();else document.querySelector('.tasks').scrollIntoView({behavior:'smooth'});
-  }));
   client.auth.onAuthStateChange((event,session)=>{window.setTimeout(async()=>{
     if (event === 'PASSWORD_RECOVERY') {
       recoveryMode = true; currentUser = session?.user || null;
@@ -149,6 +141,6 @@
     if(currentUser) await showApp();
     else {$('appPanel').hidden=true;$('authPanel').hidden=false;}
   },0);});
-  client.auth.getSession().then(({data,error})=>{if(error){authMessage(error.message,true);return;}currentUser=data.session?data.session.user:null;if(currentUser)showApp();else setMode('login');});
+  client.auth.getSession().then(({data,error})=>{if(error){authMessage(error.message,true);return;}currentUser=data.session?data.session.user:null;window.taskPulaHasSession=!!currentUser;if(currentUser)showApp();else setMode('login');});
   if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(()=>{});
 })();
