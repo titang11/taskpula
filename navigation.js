@@ -11,6 +11,7 @@ function setBusinessMode(mode){
  if(mode==='circle')$('taskpulaCircle')?.scrollIntoView({block:'start',behavior:'smooth'});
 }
 function show(view){
+ const dashboardAvailable=!$('appPanel')?.hidden;
  const hero=document.querySelector('.hero'),auth=$('authPanel'),business=$('businessHub'),app=$('appPanel'),admin=$('adminPanel');
  topViews.forEach(id=>{const el=id==='hero'?hero:$(id);if(el)el.hidden=true;});
  if(view==='home'){hero.hidden=false;}
@@ -18,7 +19,7 @@ function show(view){
  if(view==='business'){business.hidden=false;setBusinessMode('all');}
  if(view==='circle'){business.hidden=false;setBusinessMode('circle');}
  if(view==='dashboard'){
-   if(app&&!app.hidden){app.hidden=false;}else{auth.hidden=false;document.getElementById('authMessage').textContent='Sign in to open your personal dashboard.';}
+   if(dashboardAvailable){app.hidden=false;}else{auth.hidden=false;document.getElementById('authMessage').textContent='Sign in to open your personal dashboard.';}
  }
  if(view==='admin'){
    const entry=$('adminEntry');
