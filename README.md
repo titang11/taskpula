@@ -2,7 +2,7 @@
 
 TaskPula is a Botswana-first task and rewards platform. Members create an account, discover sponsor tasks, complete the task, upload private photo evidence and receive a wallet-ledger credit only after staff approval.
 
-## Connected MVP
+## Brand and Circle direction\n- TaskPula identity uses the approved blue-and-metallic-silver logo on a white/silver glassmorphism interface.\n- TaskPula Circle is a community programme on the shared TaskPula platform, not a separate account or wallet.\n- Circle profiles store member-selected display name, town, bio, interests, skills and explicit opportunity-update consent. Membership level and status are staff-controlled.\n- Referral attribution is recorded by an authenticated database function; self-referrals are blocked and referrals do not automatically grant rewards or membership progression.\n\n## Connected MVP
 - Supabase email/password authentication with email confirmation.
 - Profile creation linked to the authenticated account.
 - Live task listing from the TaskPula database (no seeded or simulated offers).

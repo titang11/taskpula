@@ -1,0 +1,32 @@
+(function(){
+'use strict';
+const db=window.taskPulaSupabase;
+if(!db)return;
+const area=document.getElementById('circleMemberArea');
+const join=document.getElementById('circleJoinBtn');
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const levels={member:'Member',contributor:'Contributor',community_ambassador:'Community Ambassador',brand_representative:'Brand Representative'};
+let user=null,profile=null;
+function note(message,error=false){const el=area?.querySelector('[data-circle-note]');if(el){el.textContent=message;el.classList.toggle('error',error);}}
+function showSignedOut(){if(!area)return;area.hidden=false;area.innerHTML='<div class="circle-member-card"><p class="eyebrow">YOUR CIRCLE PROFILE</p><h3>Join the community through your TaskPula account.</h3><p>Sign in or create an account above, then return here to complete your Circle profile.</p><button class="secondary-cta" type="button" data-circle-auth>Go to sign in</button></div>';area.querySelector('[data-circle-auth]').onclick=()=>document.getElementById('authPanel')?.scrollIntoView({behavior:'smooth'});}
+async function load(){
+ if(!area||!user){showSignedOut();return;}
+ area.hidden=false;area.innerHTML='<div class="circle-member-card"><p>Loading your Circle profile…</p></div>';
+ let r=await db.from('circle_profiles').select('user_id,display_name,town,bio,interests,skills,marketing_opt_in,membership_level,membership_status,referral_code').eq('user_id',user.id).maybeSingle();
+ if(r.error){area.innerHTML='<div class="circle-member-card"><p class="error">'+esc(r.error.message)+'</p></div>';return;}
+ profile=r.data;
+ if(!profile){const p=await db.from('profiles').select('display_name').eq('id',user.id).maybeSingle();const name=p.data?.display_name||user.user_metadata?.display_name||'';r=await db.from('circle_profiles').insert({user_id:user.id,display_name:name}).select('user_id,display_name,town,bio,interests,skills,marketing_opt_in,membership_level,membership_status,referral_code').single();if(r.error){area.innerHTML='<div class="circle-member-card"><p class="error">'+esc(r.error.message)+'</p></div>';return;}profile=r.data;}
+ const refs=await db.from('circle_referrals').select('id,status').eq('referrer_user_id',user.id);
+ const count=refs.error?0:(refs.data||[]).length;
+ render(count);
+}
+function render(referralCount){
+ const interests=(profile.interests||[]).join(', '),skills=(profile.skills||[]).join(', ');
+ area.innerHTML='<div class="circle-member-card"><div class="circle-member-head"><div><p class="eyebrow">YOUR TASKPULA CIRCLE</p><h3>'+esc(levels[profile.membership_level]||'Member')+'</h3><p class="circle-status">'+esc(profile.membership_status)+' membership · '+referralCount+' attributed referrals</p></div><span class="circle-code">'+esc(profile.referral_code)+'</span></div><form id="circleProfileForm" class="circle-form"><label>Display name<input name="display_name" maxlength="80" value="'+esc(profile.display_name)+'"></label><label>Town / location<input name="town" maxlength="100" value="'+esc(profile.town)+'" placeholder="e.g. Gaborone"></label><label>About you<textarea name="bio" maxlength="500" rows="2">'+esc(profile.bio)+'</textarea></label><label>Interests<input name="interests" value="'+esc(interests)+'" placeholder="Shopping, technology, food"></label><label>Skills<input name="skills" value="'+esc(skills)+'" placeholder="Research, events, testing"></label><label class="circle-consent"><input name="marketing_opt_in" type="checkbox" '+(profile.marketing_opt_in?'checked':'')+'> I agree to receive relevant TaskPula and brand opportunity updates. I can change this choice later.</label><button class="primary" type="submit">Save Circle profile</button><p class="circle-note" data-circle-note aria-live="polite"></p></form><form id="circleReferralForm" class="circle-referral-form"><label>Have a referral code?<input name="code" maxlength="20" placeholder="Enter a member code"></label><button class="secondary-cta" type="submit">Connect referral</button></form><p class="circle-note" data-circle-note aria-live="polite">Your level is earned through verified quality and suitability—not referral volume alone.</p></div>';
+ area.querySelector('#circleProfileForm').onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,d=new FormData(f),b=f.querySelector('button');b.disabled=true;try{const x=await db.from('circle_profiles').update({display_name:String(d.get('display_name')||'').trim(),town:String(d.get('town')||'').trim(),bio:String(d.get('bio')||'').trim(),interests:String(d.get('interests')||'').split(',').map(x=>x.trim()).filter(Boolean).slice(0,20),skills:String(d.get('skills')||'').split(',').map(x=>x.trim()).filter(Boolean).slice(0,20),marketing_opt_in:d.get('marketing_opt_in')==='on'}).eq('user_id',user.id);if(x.error)throw x.error;profile={...profile,display_name:String(d.get('display_name')||'').trim(),town:String(d.get('town')||'').trim(),bio:String(d.get('bio')||'').trim(),interests:String(d.get('interests')||'').split(',').map(x=>x.trim()).filter(Boolean),skills:String(d.get('skills')||'').split(',').map(x=>x.trim()).filter(Boolean),marketing_opt_in:d.get('marketing_opt_in')==='on'};note('Your Circle profile has been saved.');}catch(err){note(err.message,true);}finally{b.disabled=false;}};
+ area.querySelector('#circleReferralForm').onsubmit=async e=>{e.preventDefault();const code=new FormData(e.currentTarget).get('code');const b=e.currentTarget.querySelector('button');b.disabled=true;try{const x=await db.rpc('attribute_circle_referral',{p_referral_code:String(code||'').trim()});if(x.error)throw x.error;note('Referral attribution recorded.');}catch(err){note(err.message,true);}finally{b.disabled=false;}};
+}
+join?.addEventListener('click',async()=>{const s=await db.auth.getSession();user=s.data.session?.user||null;if(!user){showSignedOut();area?.scrollIntoView({behavior:'smooth'});return;}await load();area?.scrollIntoView({behavior:'smooth'});});
+db.auth.onAuthStateChange((event,session)=>{user=session?.user||null;if(area&& !area.hidden && user)load();});
+db.auth.getSession().then(({data})=>{user=data.session?.user||null;});
+})();
