@@ -1,1 +1,9 @@
-{"name":"TaskPula","short_name":"TaskPula","start_url":"./","display":"standalone","background_color":"#eef1f5","theme_color":"#eef1f5","description":"TaskPula — research, campaigns, verified tasks and community engagement in Botswana."}
+{
+  "name": "TaskPula",
+  "short_name": "TaskPula",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f6f7f9",
+  "theme_color": "#eef1f4",
+  "description": "TaskPula — research, campaigns, verified tasks, digital growth and community engagement in Botswana."
+}
