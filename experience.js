@@ -1,0 +1,60 @@
+(function(){
+'use strict';
+const db=()=>window.taskPulaSupabase;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const contact=window.TASKPULA_BUSINESS_CONTACT||{email:'',phone:'+26771725678',location:'Block 3, Gaborone, Botswana'};
+const style=document.createElement('style');
+style.textContent='.business-contact{margin:18px 16px;padding:22px;border:1px solid #d7e5f0;border-radius:22px;background:linear-gradient(145deg,#fff,#f0f7fc)}.business-contact h2{margin:6px 0 8px;font-size:25px;color:#103b66}.business-contact p{color:#60768b;font-size:13px;line-height:1.55}.business-contact-grid{display:grid;grid-template-columns:1fr;gap:12px}.business-contact label,.member-profile-edit label{display:block;font-size:12px;font-weight:800;color:#29445e}.business-contact input,.business-contact select,.business-contact textarea,.member-profile-edit input{display:block;width:100%;margin-top:6px;border:1px solid #cbd9e6;border-radius:11px;padding:12px;font:inherit;font-size:13px;background:#fff;color:#18334d;min-height:44px}.business-contact textarea{min-height:90px}.business-contact-actions{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}.business-contact-actions a,.business-contact-actions button{min-height:44px;padding:12px 15px;border-radius:11px;font-weight:800;text-decoration:none;border:0;background:#0b4c91;color:#fff}.business-contact-actions .secondary{background:#e7f1fa;color:#0b4c91}.business-contact .contact-note{font-size:11px;color:#71869a}.member-search{margin:10px 0 14px;width:100%;min-height:44px;padding:11px 13px;border:1px solid #cbd9e6;border-radius:12px;background:#fff;font:inherit;font-size:13px}.member-notice-panel{margin:14px 16px 20px;padding:16px;background:#fff;border:1px solid #dbe6ef;border-radius:16px}.member-notice-panel h3{margin:4px 0 10px}.member-notice{padding:12px 0;border-bottom:1px solid #e7edf3;font-size:12px}.member-profile-edit{margin-top:16px;padding:15px;border:1px solid #dbe6ef;border-radius:15px;background:#f8fbfe}.member-profile-edit .primary{min-height:44px}.admin-panel{background:linear-gradient(180deg,#f7fbff,#edf4fa)!important;border-color:#d7e5f0!important}.admin-panel .admin-top{padding:15px;border-radius:16px;background:linear-gradient(120deg,#0b3d70,#1268a9);color:#fff;box-shadow:0 10px 25px rgba(11,76,145,.16)}.admin-panel .admin-top .eyebrow{color:#cce6fb}.admin-panel .admin-top h2{color:#fff}.admin-panel .admin-metric,.admin-panel .admin-card,.admin-panel .admin-submission{box-shadow:0 7px 20px rgba(17,58,91,.05);border-color:#dce8f1}.admin-panel .admin-metric b{font-size:24px}@media(min-width:600px){.business-contact{margin-left:22px;margin-right:22px;padding:26px}.business-contact-grid{grid-template-columns:1fr 1fr}.business-contact .wide{grid-column:1/-1}.member-notice-panel{margin-left:22px;margin-right:22px}}';
+document.head.appendChild(style);
+function addBusinessContact(){
+ const hero=document.querySelector('.hero');if(!hero||document.getElementById('businessContact'))return;
+ const section=document.createElement('section');section.id='businessContact';section.className='business-contact';
+ const email=String(contact.email||'').trim(),phone=String(contact.phone||'').trim();
+ section.innerHTML='<p class="eyebrow">FOR BUSINESSES & ORGANISATIONS</p><h2>Let TaskPula manage your next campaign or research project.</h2><p>Tell us what your business needs. Our team will contact you, plan the work, coordinate participants and prepare the results. No business account or online campaign dashboard is required.</p><div class="business-contact-actions">'+(email?'<a href="mailto:'+esc(email)+'">Email TaskPula</a>':'')+(phone?'<a class="secondary" href="tel:'+esc(phone.replace(/[^+0-9]/g,''))+'">Call TaskPula · '+esc(phone)+'</a>':'')+'</div><p><b>Location:</b> '+esc(contact.location||'Gaborone, Botswana')+'</p><form id="businessEnquiryForm" novalidate><div class="business-contact-grid"><label>Business / organisation<input name="company" required maxlength="140" autocomplete="organization"></label><label>Contact person<input name="contact" required maxlength="100" autocomplete="name"></label><label>Work email<input name="email" type="email" required maxlength="160" autocomplete="email"></label><label>Phone number<input name="phone" type="tel" required maxlength="35" autocomplete="tel"></label><label>What do you need?<select name="service" required><option value="">Choose a service</option><option>Market research / paid surveys</option><option>Brand campaign / promotion</option><option>Field tasks / product trials</option><option>Digital growth / app testing</option><option>Survey or campaign report</option><option>Other business enquiry</option></select></label><label>Indicative budget (optional)<input name="budget" maxlength="80" placeholder="To be discussed"></label><label class="wide">Project details<textarea name="details" required minlength="20" maxlength="3000" placeholder="Describe your objective, audience, location, timing and expected outcomes."></textarea></label></div><div class="business-contact-actions"><button type="submit">Prepare SMS enquiry</button></div><p class="contact-note" id="businessEnquiryStatus" role="status">Your details are not stored on this website. Submitting opens your SMS app with the enquiry prepared for TaskPula.</p></form>';
+ hero.insertAdjacentElement('afterend',section);
+ section.querySelector('form').addEventListener('submit',e=>{
+  e.preventDefault();const form=e.currentTarget,status=section.querySelector('#businessEnquiryStatus');
+  if(!form.reportValidity()){status.textContent='Please complete the required fields and correct any highlighted entries.';return;}
+  if(!phone){status.textContent='TaskPula phone contact is not configured yet. Please use the published contact details.';return;}
+  const d=new FormData(form),subject='TaskPula business enquiry — '+String(d.get('company')).trim();
+  const body=['Business: '+String(d.get('company')).trim(),'Contact person: '+String(d.get('contact')).trim(),'Email: '+String(d.get('email')).trim(),'Phone: '+String(d.get('phone')).trim(),'Service: '+String(d.get('service')),'Indicative budget: '+String(d.get('budget')||'Not specified'),'Project details:',String(d.get('details')).trim()].join('\n');
+  window.location.href='sms:'+phone.replace(/[^+0-9]/g,'')+'?body='+encodeURIComponent(subject+'\n\n'+body);
+ });
+}
+function addSearchInputs(){
+ [['tasksPage','taskCards','Search tasks'],['researchPage','researchStudies','Search research opportunities'],['campaignsPage','campaignOpportunities','Search campaigns'],['growthPage','growthProjects','Search digital growth projects']].forEach(([p,l,placeholder])=>{
+  const page=document.getElementById(p),list=document.getElementById(l);if(!page||!list||page.querySelector('.member-search'))return;
+  const input=document.createElement('input');input.className='member-search';input.type='search';input.placeholder=placeholder;input.setAttribute('aria-label',placeholder);list.insertAdjacentElement('beforebegin',input);
+  input.addEventListener('input',()=>{const q=input.value.trim().toLowerCase();list.querySelectorAll(':scope > *').forEach(card=>card.hidden=!!q&&!card.textContent.toLowerCase().includes(q));});
+ });
+}
+function addActivityPanel(){
+ const page=document.getElementById('progressPage');if(!page||page.querySelector('#memberNotifications'))return;
+ const panel=document.createElement('section');panel.id='memberNotifications';panel.className='member-notice-panel';panel.innerHTML='<p class="eyebrow">ACTIVITY CENTRE</p><h3>Updates & notifications</h3><div class="member-notice-list"><div class="empty">Sign in to view your activity updates.</div></div><p class="contact-note">Updates are derived from existing task submission records. No separate notification table or push service is used.</p>';page.insertBefore(panel,page.firstChild);
+}
+async function loadActivity(){
+ const panel=document.querySelector('#memberNotifications .member-notice-list');if(!panel)return;
+ const client=db();if(!client)return;const auth=await client.auth.getUser(),user=auth.data?.user;if(!user){panel.innerHTML='<div class="empty">Sign in to view updates.</div>';return;}
+ panel.innerHTML='<div class="empty">Loading updates…</div>';
+ const result=await client.from('task_submissions').select('id,status,created_at,rejection_reason').eq('user_id',user.id).order('created_at',{ascending:false}).limit(20);
+ if(result.error){panel.innerHTML='<div class="empty">Could not load updates.</div>';return;}
+ const rows=result.data||[];panel.innerHTML=rows.length?rows.map(x=>'<article class="member-notice"><b>'+esc(x.status==='approved'?'Your task submission was approved':x.status==='rejected'?'Your task submission needs attention':'Your task submission is awaiting review')+'</b><p>'+esc(x.rejection_reason||'Check your activity history for the latest status.')+'</p><small>'+new Date(x.created_at).toLocaleString()+'</small></article>').join(''):'<div class="empty">No updates yet. Submission updates will appear here.</div>';
+}
+async function addProfileEditor(){
+ const body=document.getElementById('profilePageBody');if(!body||body.querySelector('.member-profile-edit'))return;
+ const client=db();if(!client)return;const auth=await client.auth.getUser(),user=auth.data?.user;if(!user)return;
+ const result=await client.from('profiles').select('display_name,phone').eq('id',user.id).maybeSingle();if(result.error)return;
+ const form=document.createElement('form');form.className='member-profile-edit';form.innerHTML='<p class="eyebrow">PROFILE DETAILS</p><h3>Keep your contact details current</h3><label>Display name<input name="display_name" required maxlength="60" value="'+esc(result.data?.display_name||'')+'"></label><label style="margin-top:10px">Phone number<input name="phone" type="tel" maxlength="35" value="'+esc(result.data?.phone||'')+'"></label><button class="primary" type="submit">Save profile</button><p class="auth-message" role="status"></p>';
+ form.addEventListener('submit',async e=>{e.preventDefault();if(!form.reportValidity())return;const btn=form.querySelector('button'),msg=form.querySelector('[role=status]'),d=new FormData(form);btn.disabled=true;try{const x=await client.from('profiles').update({display_name:String(d.get('display_name')).trim(),phone:String(d.get('phone')).trim()||null}).eq('id',user.id);if(x.error)throw x.error;msg.textContent='Profile updated.';}catch(err){msg.textContent=err.message||'Profile could not be updated.';msg.classList.add('error');}finally{btn.disabled=false;}});
+ body.appendChild(form);
+}
+function init(){
+ addBusinessContact();addSearchInputs();addActivityPanel();
+ const menu=document.getElementById('commandMenu');
+ if(menu&&!menu.querySelector('[data-business-contact]')){const b=document.createElement('button');b.className='command-item';b.type='button';b.dataset.businessContact='true';b.innerHTML='<span class="command-icon">✉</span><span><b>Business enquiries</b><small>Talk to TaskPula · no account needed</small></span><em>↗</em>';menu.querySelector('.command-grid')?.appendChild(b);b.addEventListener('click',()=>{window.taskPulaNavigate?.('home');document.getElementById('businessContact')?.scrollIntoView({behavior:'smooth',block:'start'});});}
+ const original=window.taskPulaNavigate;
+ if(typeof original==='function'&&!original.__experienceWrapped){const wrapped=function(view){const result=original(view);if(view==='progress')loadActivity();if(view==='profile')addProfileEditor();return result;};wrapped.__experienceWrapped=true;window.taskPulaNavigate=wrapped;}
+ const body=document.getElementById('profilePageBody');if(body)new MutationObserver(()=>{if(!document.getElementById('profilePage').hidden)addProfileEditor();}).observe(body,{childList:true,subtree:true});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();

@@ -1,0 +1,53 @@
+{
+  "_notice": "SYNTHETIC TEST FIXTURES ONLY — never import into production Supabase.",
+  "profiles": [
+    {
+      "id": "00000000-0000-4000-8000-000000000101",
+      "display_name": "Demo Member One",
+      "phone": "+267 70000001"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "00000000-0000-4000-8000-000000000201",
+      "title": "Demo grocery product check",
+      "category": "shopping",
+      "reward_amount": 5,
+      "currency": "BWP",
+      "status": "active"
+    }
+  ],
+  "task_submissions": [
+    {
+      "id": "00000000-0000-4000-8000-000000000301",
+      "task_id": "00000000-0000-4000-8000-000000000201",
+      "user_id": "00000000-0000-4000-8000-000000000101",
+      "status": "pending",
+      "created_at": "2026-01-15T10:00:00Z",
+      "evidence_path": "synthetic/demo-evidence.jpg"
+    }
+  ],
+  "campaigns": [
+    {
+      "id": "00000000-0000-4000-8000-000000000401",
+      "name": "Demo community awareness",
+      "objective": "Synthetic campaign used for interface tests",
+      "budget_cap": 500,
+      "status": "draft"
+    }
+  ],
+  "research_studies": [
+    {
+      "id": "00000000-0000-4000-8000-000000000501",
+      "title": "Demo consumer preferences survey",
+      "status": "draft"
+    }
+  ],
+  "growth_projects": [
+    {
+      "id": "00000000-0000-4000-8000-000000000601",
+      "title": "Demo app usability review",
+      "status": "draft"
+    }
+  ]
+}
