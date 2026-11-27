@@ -427,3 +427,8 @@ body{background:radial-gradient(ellipse at 10% 0%,#e6edf2 0,transparent 38%),var
 .watch-progress{margin:12px 0}.watch-progress-track{height:9px;border-radius:20px;background:#e6ebf0;overflow:hidden}.watch-progress-track span{display:block;height:100%;width:0;background:linear-gradient(90deg,#6f91b6,#aab8c8);transition:width .25s}.watch-progress small{display:block;margin-top:7px;color:var(--tp-muted)}
 .watch-player-card button{width:100%}.watch-success{margin:16px}
 #watchNotice:empty{display:none}.watch-campaign-card .smallbtn{margin-top:8px}
+
+/* Paid hero placement for banner inventory */
+.hero .ad-carousel{grid-column:1/-1;width:100%;margin:8px 0 0;min-height:110px}
+.hero .ad-slide-link{min-height:108px}
+@media(min-width:760px){.hero .ad-carousel{max-width:100%}}
