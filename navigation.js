@@ -31,4 +31,6 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();});
 document.querySelectorAll('.bottom [data-nav]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.nav)));
 document.querySelectorAll('[data-module-link]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.moduleLink)));
 window.taskPulaNavigate=show;
+
+const experienceScript=document.createElement('script');experienceScript.src='./experience.js';experienceScript.defer=true;document.body.appendChild(experienceScript);
 })();
