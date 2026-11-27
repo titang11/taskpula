@@ -14,6 +14,8 @@ function setBusinessMode(mode){
  });
 }
 function show(view){
+ const bottomNav=document.querySelector('.bottom');
+ if(bottomNav)bottomNav.hidden=!(window.taskPulaHasSession&&['tasks','progress','wallet','profile','dashboard','research','campaigns','growth','watch','circle'].includes(view));
  const hero=document.querySelector('.hero'),auth=$('authPanel'),business=$('businessHub'),app=$('appPanel'),admin=$('adminPanel'),circle=$('circlePage');
  [hero,auth,business,app,admin,circle].forEach(el=>{if(el)el.hidden=true;});
  if(view==='home'){if(hero)hero.hidden=false;}
