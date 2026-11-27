@@ -468,3 +468,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 
 /* Keep all account-level navigation in the floating menu. */
 .admin-entry{display:none!important}
+
+
+/* 2026-11-27: single-menu navigation; no persistent bottom shortcut bar. */
+.bottom{display:none!important}
+.menu-trigger{bottom:calc(20px + env(safe-area-inset-bottom))!important}
+@media(max-width:430px){.menu-trigger{bottom:calc(16px + env(safe-area-inset-bottom))!important}}
