@@ -5,6 +5,7 @@ returns jsonb language plpgsql security definer set search_path=public,auth as $
 declare v_campaign public.watch_campaigns%rowtype; v_session public.watch_sessions%rowtype; v_today integer; v_active integer;
 begin
  if coalesce(auth.role(),'')<>'service_role' or p_user_id is null then raise exception 'Not authorized.'; end if;
+ perform pg_advisory_xact_lock(hashtextextended(p_user_id::text,0));
  if p_client_nonce is null or length(p_client_nonce)<16 or length(p_client_nonce)>128 then raise exception 'Invalid viewing session request.'; end if;
  update public.watch_sessions set status='expired' where user_id=p_user_id and campaign_id=p_campaign_id and status='started' and expires_at<=now();
  select count(*) into v_active from public.watch_sessions where user_id=p_user_id and status='started' and expires_at>now();
