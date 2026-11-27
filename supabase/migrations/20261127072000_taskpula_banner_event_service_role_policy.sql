@@ -1,0 +1,2 @@
+drop policy if exists banner_ad_event_dedup_service_only on public.banner_ad_event_dedup;
+create policy banner_ad_event_dedup_service_only on public.banner_ad_event_dedup for all to service_role using (true) with check (true);
