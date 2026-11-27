@@ -87,6 +87,9 @@ begin
   if not found then raise exception 'Campaign not found'; end if;
 
   if tg_table_name='tasks' then
+    if (v_row->>'sponsor_id')::uuid is distinct from v_campaign.sponsor_id then
+      raise exception 'Task sponsor must match its campaign sponsor';
+    end if;
     v_reward := coalesce((v_row->>'reward_amount')::numeric,0);
     v_max := coalesce(nullif(v_row->>'max_submissions','')::integer,0);
   elsif tg_table_name='research_studies' then
@@ -142,6 +145,9 @@ declare
 begin
   select * into v_campaign from public.campaigns where id=new.campaign_id for update;
   if not found then raise exception 'Campaign not found'; end if;
+  if tg_op='UPDATE' and new.campaign_id is distinct from old.campaign_id then
+    raise exception 'A funding entry cannot be moved to another campaign; record a correcting entry instead';
+  end if;
   if new.sponsor_id is distinct from v_campaign.sponsor_id then
     raise exception 'Funding sponsor must match campaign sponsor';
   end if;
@@ -184,6 +190,21 @@ end $$;
 revoke all on function private.enforce_campaign_funding_entry() from public,anon,authenticated;
 revoke all on function private.enforce_campaign_activation() from public,anon,authenticated;
 
+-- A campaign pause or funding shortfall stops new participation across every department.
+create or replace function private.taskpula_assert_campaign_live(p_campaign_id uuid)
+returns void language plpgsql security definer set search_path=''
+as $$
+declare v_campaign public.campaigns%rowtype; v_funded numeric; v_committed numeric;
+begin
+  if p_campaign_id is null then raise exception 'This reward opportunity is not linked to a funded campaign'; end if;
+  select * into v_campaign from public.campaigns where id=p_campaign_id for share;
+  if not found or v_campaign.status<>'active' then raise exception 'The linked campaign is not active'; end if;
+  v_funded := private.taskpula_campaign_confirmed_funds(p_campaign_id);
+  v_committed := private.taskpula_campaign_committed_budget(p_campaign_id,null,null);
+  if v_funded<v_committed then raise exception 'The linked campaign is not fully funded'; end if;
+end $$;
+revoke all on function private.taskpula_assert_campaign_live(uuid) from public,anon,authenticated;
+
 -- Prevent duplicate active/pending participant entries and reserve the participant
 -- slot under a row lock. Rejected entries may be resubmitted.
 create or replace function private.taskpula_guard_reward_submission()
@@ -194,13 +215,15 @@ declare
   v_max integer;
   v_used integer;
   v_project_id uuid;
+  v_campaign_id uuid;
 begin
   if tg_table_name='research_responses' then
     v_project_id := new.study_id;
-    select status,max_submissions into v_project_status,v_max
+    select status,max_submissions,campaign_id into v_project_status,v_max,v_campaign_id
       from public.research_studies where id=v_project_id for update;
     if not found then raise exception 'Research study not found'; end if;
     if v_project_status<>'active' then raise exception 'This research study is not accepting responses'; end if;
+    perform private.taskpula_assert_campaign_live(v_campaign_id);
     if exists(select 1 from public.research_responses r where r.study_id=v_project_id and r.user_id=new.user_id and r.status<>'rejected') then
       raise exception 'You already have an active or approved response for this study';
     end if;
@@ -208,10 +231,11 @@ begin
       where r.study_id=v_project_id and r.status<>'rejected';
   else
     v_project_id := new.project_id;
-    select status,max_submissions into v_project_status,v_max
+    select status,max_submissions,campaign_id into v_project_status,v_max,v_campaign_id
       from public.growth_projects where id=v_project_id for update;
     if not found then raise exception 'Digital Growth project not found'; end if;
     if v_project_status<>'active' then raise exception 'This Digital Growth project is not accepting submissions'; end if;
+    perform private.taskpula_assert_campaign_live(v_campaign_id);
     if exists(select 1 from public.growth_submissions g where g.project_id=v_project_id and g.user_id=new.user_id and g.status<>'rejected') then
       raise exception 'You already have an active or approved submission for this project';
     end if;
@@ -306,6 +330,44 @@ begin
   return true;
 end $$;
 
+-- Task submissions for campaign-linked tasks also stop when the sponsor campaign is paused
+-- or loses confirmed funding. Legacy unlinked active tasks are grandfathered until admin review.
+create or replace function private.validate_submission()
+returns trigger language plpgsql security definer set search_path=''
+as $
+declare v_task public.tasks%rowtype; v_count bigint; v_reserved numeric(14,2);
+begin
+  if (select auth.uid()) is null or new.user_id<>(select auth.uid()) then
+    raise exception 'Submission user must match the signed-in account';
+  end if;
+  select * into v_task from public.tasks where id=new.task_id for update;
+  if not found or v_task.status<>'active' or v_task.starts_at>now()
+    or (v_task.ends_at is not null and v_task.ends_at<=now()) then
+    raise exception 'Task is not currently available';
+  end if;
+  if v_task.campaign_id is not null then
+    perform private.taskpula_assert_campaign_live(v_task.campaign_id);
+  end if;
+  select count(*),coalesce(sum(v_task.reward_amount),0) into v_count,v_reserved
+    from public.task_submissions s where s.task_id=new.task_id and s.status in ('pending','approved');
+  if v_task.max_submissions is not null and v_count>=v_task.max_submissions then
+    raise exception 'Task submission limit has been reached';
+  end if;
+  if v_reserved+v_task.reward_amount>v_task.budget_amount then
+    raise exception 'Task reward budget has been reached';
+  end if;
+  return new;
+end $;
+revoke all on function private.validate_submission() from public,anon,authenticated;
+
+-- Record research/growth programme configuration changes in the admin audit trail.
+drop trigger if exists audit_research_admin_changes on public.research_studies;
+create trigger audit_research_admin_changes after insert or update or delete on public.research_studies
+for each row execute function private.audit_admin_mutations();
+drop trigger if exists audit_growth_admin_changes on public.growth_projects;
+create trigger audit_growth_admin_changes after insert or update or delete on public.growth_projects
+for each row execute function private.audit_admin_mutations();
+
 -- Per-member transaction-scoped advisory locks serialize concurrent payout requests
 -- and settlements, so two requests cannot reserve or pay the same available funds.
 create or replace function private.taskpula_lock_wallet(p_user_id uuid)
@@ -329,6 +391,8 @@ begin
   if p_amount>available-reserved then raise exception 'Payout amount exceeds your available balance'; end if;
   insert into public.wallet_payout_requests(user_id,amount,payout_method,payout_reference)
   values(uid,p_amount,payout_method,trim(payout_reference)) returning id into new_id;
+  insert into public.audit_events(actor_id,action,entity_type,entity_id,details)
+  values(uid,'payout_requested','wallet_payout_request',new_id::text,jsonb_build_object('amount',p_amount,'method',payout_method));
   return new_id;
 end $$;
 
