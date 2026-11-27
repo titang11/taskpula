@@ -4,7 +4,7 @@ import unittest
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 class ExperienceContractTests(unittest.TestCase):
  def test_business_intake_is_no_account_and_no_database_write(self):
-  s=(ROOT/'experience.js').read_text();self.assertIn('businessEnquiryForm',s);self.assertIn('mailto:',s);self.assertNotIn("from('campaign_requests').insert",s);self.assertIn('No business account',s)
+  s=(ROOT/'experience.js').read_text();self.assertIn('businessEnquiryForm',s);self.assertIn('sms:',s);self.assertNotIn("from('campaign_requests').insert",s);self.assertIn('No business account',s);self.assertIn('+26771725678',s);self.assertIn('Block 3, Gaborone, Botswana',s)
  def test_member_updates_are_read_only_derived_from_own_submissions(self):
   s=(ROOT/'experience.js').read_text();self.assertIn("from('task_submissions').select",s);self.assertIn('.eq(\'user_id\',user.id)',s);self.assertNotIn("wallet_transactions').insert",s);self.assertNotIn("wallet_payout_requests').insert",s)
  def test_profile_edit_uses_existing_fields(self):
