@@ -1,0 +1,67 @@
+/* Homepage ad: true full-bleed image-only banner. */
+#adCarousel.ad-carousel{
+  display:block;
+  position:relative;
+  left:50%;
+  transform:translateX(-50%);
+  width:100vw;
+  max-width:100vw;
+  aspect-ratio:2.63 / 1;
+  min-height:0;
+  margin:14px 0 24px;
+  padding:0;
+  overflow:hidden;
+  border:0;
+  border-radius:0;
+  background:#e8eef5;
+  box-shadow:0 12px 28px rgba(15,55,85,.10);
+}
+#adCarousel.ad-carousel[hidden]{display:none!important}
+#adCarousel .ad-slide-link{
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  min-height:0;
+  padding:0;
+  margin:0;
+  border:0;
+  border-radius:0;
+  overflow:hidden;
+}
+#adCarousel .ad-slide-link img{
+  display:block;
+  width:100%;
+  height:100%;
+  max-width:none;
+  max-height:none;
+  object-fit:cover;
+  object-position:center;
+}
+/* The creative itself is the whole advertisement and the only visible content. */
+#adCarousel .ad-carousel-label,
+#adCarousel .ad-slide-copy,
+#adCarousel .ad-slide-cta{display:none!important}
+#adCarousel .ad-carousel-dots{
+  position:absolute;
+  z-index:3;
+  top:10px;
+  right:12px;
+  bottom:auto;
+  display:flex;
+  gap:5px;
+  pointer-events:none;
+}
+#adCarousel .ad-carousel-dots span{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:rgba(255,255,255,.55);
+  box-shadow:0 1px 4px rgba(0,0,0,.25);
+}
+#adCarousel .ad-carousel-dots span.active{background:#fff}
+@media(max-width:430px){
+  #adCarousel.ad-carousel{width:100vw;max-width:100vw;margin:10px 0 18px}
+  #adCarousel .ad-carousel-dots{top:8px;right:9px}
+}
