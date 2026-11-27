@@ -20,14 +20,14 @@ function show(view){
  else if(view==='join'){if(auth)auth.hidden=false;}
  else if(view==='about'){if(business){business.hidden=false;setBusinessMode('overview');}}
  else if(view==='circle'){if(!window.taskPulaHasSession){if(auth)auth.hidden=false;const m=$('authMessage');if(m)m.textContent='Sign in to manage your TaskPula Circle membership.';}else if(circle)circle.hidden=false;}
- else if(['tasks','progress','wallet','profile','dashboard','research','campaigns','growth'].includes(view)){
+ else if(['tasks','progress','wallet','profile','dashboard','research','campaigns','growth','watch'].includes(view)){
    if(!window.taskPulaHasSession||!app){if(auth)auth.hidden=false;const m=$('authMessage');if(m)m.textContent='Sign in to access your personal TaskPula workspace.';}
-   else{app.hidden=false;const target=view==='dashboard'?'dashboard':view;const map={dashboard:'memberHomePage',tasks:'tasksPage',progress:'progressPage',wallet:'walletPage',profile:'profilePage',research:'researchPage',campaigns:'campaignsPage',growth:'growthPage'};app.querySelectorAll('.member-page').forEach(page=>{page.hidden=page.id!==map[target];});}
+   else{app.hidden=false;const target=view==='dashboard'?'dashboard':view;const map={dashboard:'memberHomePage',tasks:'tasksPage',progress:'progressPage',wallet:'walletPage',profile:'profilePage',research:'researchPage',campaigns:'campaignsPage',growth:'growthPage',watch:'watchPage'};app.querySelectorAll('.member-page').forEach(page=>{page.hidden=page.id!==map[target];});}
  }
  else if(view==='admin'){const entry=$('adminEntry');if(entry&&!entry.hidden&&admin)admin.hidden=false;else{if(auth)auth.hidden=false;const m=$('authMessage');if(m)m.textContent='Admin access requires an authorized staff account.';}}
  document.querySelectorAll('.command-item').forEach(b=>b.classList.toggle('selected',b.dataset.view===view));
  document.querySelectorAll('.bottom [data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));
- closeMenu();window.scrollTo({top:0,behavior:'smooth'});
+ closeMenu();if(view==='watch')window.taskPulaLoadWatch?.();window.scrollTo({top:0,behavior:'smooth'});
 }
 function openMenu(){menu.classList.add('open');scrim.hidden=false;trigger.setAttribute('aria-expanded','true');menu.setAttribute('aria-hidden','false');document.body.classList.add('menu-open');close.focus();}
 function closeMenu(){menu.classList.remove('open');scrim.hidden=true;trigger.setAttribute('aria-expanded','false');menu.setAttribute('aria-hidden','true');document.body.classList.remove('menu-open');}
