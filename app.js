@@ -72,6 +72,8 @@
     // Authentication never replaces the shared public landing page.
     // Member tools open only when the consumer selects a workspace destination.
     $('authPanel').hidden = true; $('appPanel').hidden = true; window.taskPulaHasSession = true;
+    const homeAction=document.querySelector('.hero-actions [data-open-view]');
+    if(homeAction){homeAction.dataset.openView='dashboard';homeAction.textContent='Open my dashboard';}
     try { await loadData(); render(); window.taskPulaNavigate?.('home'); } catch (error) { toast(error.message || 'Could not load your account data.'); }
   }
   function render() {
