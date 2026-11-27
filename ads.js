@@ -7,9 +7,9 @@ if(!db||!box||!link)return;
 let items=[],index=0,timer=null;
 function draw(){
  if(!items.length){box.hidden=true;return;}
- const ad=items[index];db.rpc('track_banner_ad_event',{p_ad_id:ad.id,p_event:'impression'}).then(()=>{}).catch(()=>{});const file=db.storage.from('taskpula-ads').getPublicUrl(ad.image_path);
+ const ad=items[index];db.functions.invoke('taskpula-banner-track',{body:{ad_id:ad.id,event:'impression'}}).then(()=>{}).catch(()=>{});const file=db.storage.from('taskpula-ads').getPublicUrl(ad.image_path);
  let destination='';try{const u=new URL(ad.destination_url);if(u.protocol!=='https:')throw new Error();destination=u.href;}catch(_){box.hidden=true;return;}
- img.src=file.data.publicUrl;img.alt=ad.title+' advertisement';title.textContent=ad.title;advertiser.textContent=ad.advertiser_name;link.href=destination;link.onclick=()=>{db.rpc('track_banner_ad_event',{p_ad_id:ad.id,p_event:'click'}).then(()=>{}).catch(()=>{});};
+ img.src=file.data.publicUrl;img.alt=ad.title+' advertisement';title.textContent=ad.title;advertiser.textContent=ad.advertiser_name;link.href=destination;link.onclick=()=>{db.functions.invoke('taskpula-banner-track',{body:{ad_id:ad.id,event:'click'}}).then(()=>{}).catch(()=>{});};
  dots.innerHTML=items.map((_,i)=>'<span class="'+(i===index?'active':'')+'" aria-hidden="true"></span>').join('');
  box.hidden=false;
 }
