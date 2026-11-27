@@ -480,15 +480,17 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 #adCarousel.ad-carousel{
   display:block;
   position:relative;
-  width:calc(100% - 32px);
+  width:100vw;
   max-width:none;
   aspect-ratio:2.63 / 1;
   min-height:0;
-  margin:14px auto 24px;
+  margin:14px 0 24px;
+  margin-left:calc(50% - 50vw);
+  margin-right:calc(50% - 50vw);
   padding:0;
   overflow:hidden;
   border:1px solid rgba(15,55,85,.10);
-  border-radius:20px;
+  border-radius:0;
   background:#e8eef5;
   box-shadow:0 14px 32px rgba(15,55,85,.12);
 }
@@ -536,7 +538,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   display:flex;
   flex-direction:column;
   gap:3px;
-  padding:30px 130px 15px 16px;
+  padding:30px 16px 15px 16px;
   color:#fff;
   background:linear-gradient(0deg,rgba(5,22,39,.78),rgba(5,22,39,0));
   text-shadow:0 1px 3px rgba(0,0,0,.35);
@@ -572,7 +574,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 }
 #adCarousel .ad-carousel-dots span.active{background:#fff}
 @media(max-width:430px){
-  #adCarousel.ad-carousel{width:calc(100% - 24px);border-radius:15px;margin:10px auto 18px}
+  #adCarousel.ad-carousel{width:100vw;border-radius:0;margin:10px 0 18px;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw)}
   #adCarousel .ad-slide-copy{padding:24px 92px 10px 11px}
   #adCarousel .ad-slide-copy small{font-size:9px}
   #adCarousel .ad-slide-cta{right:9px;bottom:9px;padding:6px 8px;font-size:9px}
