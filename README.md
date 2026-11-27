@@ -39,7 +39,10 @@ Circle profiles contain member-selected display name, town, bio, interests, skil
 - Circle member profiles, referral codes, referral attribution and admin membership controls.
 - Submission status and wallet transactions read from the database.
 - Wallet balance calculated from the transaction ledger; no fake balance or local demo wallet.
-- White-and-silver glassmorphism interface with blue accents and responsive web-app shell.
+- White-and-silver glassmorphism interface with blue accents, transparent vector branding, round floating menu control and responsive web-app shell.
+- Distinct member and administrator workspaces. The administrator navigation entry is hidden until the server confirms staff authorization.
+- Banner advertisement upload includes a creative preview, secure HTTPS destination validation, schedule validation, payment confirmation and approval controls.
+- Administrator Fraud & Trust view summarizes verified Watch & Earn session controls and highlights repeated task-submission or failed-session patterns for human review.
 
 ## Security and financial controls
 
@@ -66,7 +69,8 @@ Client campaign funding must be received and confirmed before TaskPula publishes
 - Live account registration, email confirmation, member submissions, staff reviews and wallet credits still require end-to-end testing with authorized test accounts.
 - Supabase leaked-password protection should be enabled in Authentication password security settings.
 - The private audit log intentionally has no client-facing RLS policy; it remains in the non-exposed private schema.
-- Sponsor self-service workflows, payment reconciliation, advanced fraud analytics and production monitoring require further work.
+- Sponsor self-service workflows, payment reconciliation, cross-department automated fraud scoring, device/IP risk correlation, and production monitoring still require further work. The Fraud & Trust screen provides operational indicators; it is not a complete automated fraud decision engine.
+- Supabase leaked-password protection must be enabled in Authentication password security settings before public launch.
 - Keep the Supabase project on the free tier unless the owner explicitly approves a paid service.
 
 ## Deploy
