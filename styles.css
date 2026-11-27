@@ -463,3 +463,5 @@ body{background:radial-gradient(ellipse at 10% 0%,#e6edf2 0,transparent 38%),var
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(22,135,197,.35);outline-offset:2px}
 @media(max-width:430px){.taskpula-logo{width:160px;height:50px}.menu-trigger{width:58px!important;height:58px!important;right:14px!important;bottom:calc(84px + env(safe-area-inset-bottom))!important}.command-grid{grid-template-columns:1fr}.bottom{padding-right:76px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+.ad-preview{margin-top:10px;min-height:94px;border:1px dashed #b8cad8;border-radius:13px;background:linear-gradient(145deg,#f3f8fb,#eaf2f7);display:grid;place-items:center;overflow:hidden;color:#71899b;font-size:11px;padding:10px}.ad-preview img{display:block;width:100%;max-height:190px;object-fit:contain;border-radius:9px}
