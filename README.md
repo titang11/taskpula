@@ -69,7 +69,7 @@ Client campaign funding must be received and confirmed before TaskPula publishes
 - Live account registration, email confirmation, member submissions, staff reviews and wallet credits still require end-to-end testing with authorized test accounts.
 - Supabase leaked-password protection should be enabled in Authentication password security settings.
 - The private audit log intentionally has no client-facing RLS policy; it remains in the non-exposed private schema.
-- Sponsor self-service workflows, payment reconciliation, cross-department automated fraud scoring, device/IP risk correlation, and production monitoring still require further work. The Fraud & Trust screen provides operational indicators; it is not a complete automated fraud decision engine.
+- Sponsor self-service workflows, payment reconciliation, automated risk scoring and decisioning, privacy-governed device/IP risk correlation, duplicate image-content hashing, and production monitoring still require further work. Database triggers currently create review signals for rapid or repeated task, research and growth submissions, reused evidence paths, and repeated failed video sessions. The Fraud & Trust screen provides operational indicators; it is not a complete automated fraud decision engine.
 - Supabase leaked-password protection must be enabled in Authentication password security settings before public launch.
 - Keep the Supabase project on the free tier unless the owner explicitly approves a paid service.
 
