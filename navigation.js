@@ -17,7 +17,7 @@ function show(view){
    if(!window.taskPulaHasSession||!app){if(auth)auth.hidden=false;const m=$('authMessage');if(m)m.textContent='Sign in to access your personal TaskPula workspace.';}
    else{app.hidden=false;const target=view==='dashboard'?'dashboard':view;const map={dashboard:'memberHomePage',tasks:'tasksPage',progress:'progressPage',wallet:'walletPage',profile:'profilePage',research:'researchPage',campaigns:'campaignsPage',growth:'growthPage',watch:'watchPage'};app.querySelectorAll('.member-page').forEach(page=>{page.hidden=page.id!==map[target];});}
  }
- else if(view==='admin'){const entry=$('adminEntry'),item=$('menuAdminItem');if(entry&&!entry.hidden&&window.taskPulaIsAdmin&&admin){admin.hidden=false;if(bottomNav)bottomNav.hidden=true;document.body.classList.add('admin-mode');}else{if(auth)auth.hidden=false;const m=$('authMessage');if(m)m.textContent='Admin access requires an authorized staff account.';}}
+ else if(view==='admin'){const entry=$('adminEntry');if(entry&&!entry.hidden&&window.taskPulaIsAdmin&&admin){if(bottomNav)bottomNav.hidden=true;window.taskPulaOpenAdmin?.();}else{if(auth)auth.hidden=false;const m=$('authMessage');if(m)m.textContent='Admin access requires an authorized staff account.';}}
  document.querySelectorAll('.command-item').forEach(b=>b.classList.toggle('selected',b.dataset.view===view));
  document.querySelectorAll('.bottom [data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));
  closeMenu();if(view==='watch')window.taskPulaLoadWatch?.();window.scrollTo({top:0,behavior:'smooth'});
