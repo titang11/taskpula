@@ -17,6 +17,10 @@ class MigrationContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.sql = MIGRATION.read_text(encoding="utf-8").lower()
+        cls.all_sql = "\n".join(
+            path.read_text(encoding="utf-8").lower()
+            for path in sorted(MIGRATIONS.glob("*.sql"))
+        )
         cls.edge = EDGE_FUNCTION.read_text(encoding="utf-8").lower()
 
     def test_migration_is_transactional(self):
@@ -36,12 +40,12 @@ class MigrationContractTests(unittest.TestCase):
     def test_reward_programmes_enforce_participant_and_budget_limits(self):
         self.assertIn("max_submissions", self.sql)
         self.assertIn("participant limit", self.sql)
-        self.assertIn("budget exhausted", self.sql)
+        self.assertIn("v_budget<(v_reward*v_max)", self.sql)
         self.assertIn("for update", self.sql)
 
     def test_browser_cannot_write_wallet_ledger(self):
         self.assertRegex(
-            self.sql,
+            self.all_sql,
             r"revoke\s+insert\s*,\s*update\s*,\s*delete\s+on\s+public\.wallet_transactions\s+from\s+anon\s*,\s*authenticated",
         )
 
@@ -52,7 +56,7 @@ class MigrationContractTests(unittest.TestCase):
         self.assertIn("banner_ad_event_dedup", self.sql)
 
     def test_edge_function_validates_viewability_and_uses_hmac(self):
-        self.assertIn('hash: "sha-256"', self.edge)
+        self.assertIn('hash:"sha-256"', self.edge)
         self.assertIn("crypto.subtle.sign", self.edge)
         self.assertIn("viewable_ms", self.edge)
         self.assertIn("viewablems<1000", self.edge)
