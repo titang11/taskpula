@@ -4,13 +4,7 @@
 TaskPula is the service provider. Businesses do not create accounts, sign in, manage campaigns, or access dashboards by default. They contact TaskPula by the official business phone/email, provide a brief, and the TaskPula administrator manages sponsor records, campaign setup, delivery and reporting. Requested reports can be prepared and delivered manually as Excel or another agreed format.
 
 ## Public business enquiry
-The landing page includes a no-account enquiry form. It validates company, contact, email, phone, service and project details, then prepares an email using the configured contact address. It does not write enquiry data to Supabase or store personal information in the browser. Configure before launch:
-
-```js
-window.TASKPULA_BUSINESS_CONTACT = { email: 'REPLACE_WITH_OFFICIAL_BUSINESS_EMAIL', phone: 'REPLACE_WITH_OFFICIAL_BUSINESS_PHONE' };
-```
-
-Do not publish placeholder contact details. Until the official email is configured, the form explains that routing is unavailable.
+The landing page displays the official business telephone number (+267 71725678) and location (Block 3, Gaborone, Botswana). The no-account enquiry form validates the submitted details and opens the visitor's SMS app with a prepared message to the business phone number. No email address is published or required. SMS availability depends on the visitor's device and mobile network. Enquiry content is not stored in Supabase or in the website.
 
 ## Member experience
 - Profile editing uses existing profiles.display_name and profiles.phone fields.
