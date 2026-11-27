@@ -22,9 +22,9 @@ async function init(){
  if(!items.length){box.hidden=true;return;}
  index=0;draw();
  if(timer)clearInterval(timer);
- if(items.length>1)timer=setInterval(()=>{index=(index+1)%items.length;draw();},3000);
+ if(items.length>3)timer=setInterval(()=>{index=(index+1)%items.length;draw();},3000);
  }catch(e){console.warn('TaskPula ads could not load:',e.message);box.hidden=true;}
 }
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&timer){clearInterval(timer);timer=null;}else if(!document.hidden&&items.length>1&&!timer){timer=setInterval(()=>{index=(index+1)%items.length;draw();},3000);}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&timer){clearInterval(timer);timer=null;}else if(!document.hidden&&items.length>3&&!timer){timer=setInterval(()=>{index=(index+1)%items.length;draw();},3000);}});
 init();
 })();

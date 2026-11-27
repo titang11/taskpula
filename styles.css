@@ -399,3 +399,22 @@ body{background:radial-gradient(ellipse at 10% 0%,#e6edf2 0,transparent 38%),var
 .client-choice{display:flex;justify-content:space-between;width:100%;padding:14px;margin-top:9px;border:1px solid #e5d8ca;border-radius:10px;background:#fff;text-align:left;color:#173f5e;font-weight:800}
 .client-choice span{color:#155b91;font-size:11px}
 @media(max-width:680px){.client-auth-grid,.client-section-grid{grid-template-columns:1fr}.client-portal-head{align-items:flex-start;flex-direction:column}.client-metrics{grid-template-columns:1fr 1fr}.client-metrics>div:last-child{grid-column:1/-1}.client-two-col{grid-template-columns:1fr}}
+
+
+/* TaskPula unified member workspace */
+.module-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 16px 24px}
+.module-grid button{min-height:124px;text-align:left;padding:17px;border:1px solid rgba(255,255,255,.9);border-radius:20px;background:rgba(255,255,255,.72);box-shadow:0 12px 34px rgba(32,48,68,.07);backdrop-filter:blur(20px);color:var(--tp-ink);display:flex;flex-direction:column;gap:7px;cursor:pointer}
+.module-grid button>span{font-size:24px;color:var(--tp-blue)}
+.module-grid b{font-size:14px}.module-grid small{font-size:11px;color:var(--tp-muted)}
+.module-list{display:grid;gap:12px;margin:16px}
+.module-card{padding:18px;border:1px solid rgba(255,255,255,.9);border-radius:20px;background:rgba(255,255,255,.72);box-shadow:0 12px 34px rgba(32,48,68,.06);backdrop-filter:blur(18px)}
+.module-card h3{margin:6px 0;font-size:16px}.module-card p{font-size:12px;line-height:1.55;color:var(--tp-muted)}
+.module-meta{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;color:#647386;font-size:10px}
+.module-chip{display:inline-flex;padding:6px 9px;border-radius:20px;background:rgba(18,107,209,.08);color:#155da9;font-size:10px;font-weight:800}
+.module-empty{padding:22px;border:1px dashed #c8d2de;border-radius:18px;text-align:center;color:var(--tp-muted);font-size:12px}
+.payout-form{display:grid;gap:10px;margin-top:14px}
+.payout-form label{display:grid;gap:6px;font-size:11px;font-weight:800}
+.payout-form input,.payout-form select{width:100%;padding:12px;border-radius:11px;border:1px solid #cfd6df;background:rgba(255,255,255,.82);font:inherit}
+.member-page-heading{padding:22px 20px 8px}
+.member-card{margin:14px 16px;padding:18px;border-radius:20px;background:rgba(255,255,255,.68);border:1px solid #ffffffdc;box-shadow:var(--tp-shadow);backdrop-filter:blur(20px)}
+@media(min-width:650px){.module-grid{grid-template-columns:repeat(3,minmax(0,1fr));margin-left:22px;margin-right:22px}.module-list{grid-template-columns:repeat(2,minmax(0,1fr))}.payout-form{grid-template-columns:repeat(2,minmax(0,1fr))}.payout-form button,.payout-form p{grid-column:1/-1}}

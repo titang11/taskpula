@@ -20,9 +20,9 @@ function show(view){
  else if(view==='join'){if(auth)auth.hidden=false;}
  else if(view==='about'){if(business){business.hidden=false;setBusinessMode('overview');}}
  else if(view==='circle'){if(!window.taskPulaHasSession){if(auth)auth.hidden=false;const m=$('authMessage');if(m)m.textContent='Sign in to manage your TaskPula Circle membership.';}else if(circle)circle.hidden=false;}
- else if(['tasks','progress','wallet','profile','dashboard'].includes(view)){
+ else if(['tasks','progress','wallet','profile','dashboard','research','campaigns','growth'].includes(view)){
    if(!window.taskPulaHasSession||!app){if(auth)auth.hidden=false;const m=$('authMessage');if(m)m.textContent='Sign in to access your personal TaskPula workspace.';}
-   else{app.hidden=false;const target=view==='dashboard'?'tasks':view;const map={tasks:'tasksPage',progress:'progressPage',wallet:'walletPage',profile:'profilePage'};app.querySelectorAll('.member-page').forEach(page=>{page.hidden=page.id!==map[target];});}
+   else{app.hidden=false;const target=view==='dashboard'?'dashboard':view;const map={dashboard:'memberHomePage',tasks:'tasksPage',progress:'progressPage',wallet:'walletPage',profile:'profilePage',research:'researchPage',campaigns:'campaignsPage',growth:'growthPage'};app.querySelectorAll('.member-page').forEach(page=>{page.hidden=page.id!==map[target];});}
  }
  else if(view==='admin'){const entry=$('adminEntry');if(entry&&!entry.hidden&&admin)admin.hidden=false;else{if(auth)auth.hidden=false;const m=$('authMessage');if(m)m.textContent='Admin access requires an authorized staff account.';}}
  document.querySelectorAll('.command-item').forEach(b=>b.classList.toggle('selected',b.dataset.view===view));
@@ -44,5 +44,5 @@ document.querySelectorAll('[data-business-tab]').forEach(tab=>tab.addEventListen
 }));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();});
 document.querySelectorAll('.bottom [data-nav]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.nav)));
-window.taskPulaNavigate=show;
+document.querySelectorAll('[data-module-link]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.moduleLink)));\nwindow.taskPulaNavigate=show;
 })();
