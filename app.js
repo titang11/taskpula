@@ -69,8 +69,10 @@
     profile = results[0].data; tasks = results[1].data || []; submissions = results[2].data || []; transactions = results[3].data || [];
   }
   async function showApp() {
-    $('authPanel').hidden = true; $('appPanel').hidden = false; window.taskPulaHasSession = true;
-    try { await loadData(); render(); window.taskPulaNavigate?.('dashboard'); } catch (error) { toast(error.message || 'Could not load your account data.'); }
+    // Authentication never replaces the shared public landing page.
+    // Member tools open only when the consumer selects a workspace destination.
+    $('authPanel').hidden = true; $('appPanel').hidden = true; window.taskPulaHasSession = true;
+    try { await loadData(); render(); window.taskPulaNavigate?.('home'); } catch (error) { toast(error.message || 'Could not load your account data.'); }
   }
   function render() {
     $('balance').textContent = money(transactions.reduce((sum,item) => sum + Number(item.amount || 0),0));
