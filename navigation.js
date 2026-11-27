@@ -6,6 +6,7 @@ if(!trigger||!menu||!scrim)return;
 function show(view){
  const bottomNav=document.querySelector('.bottom');
  menu.querySelectorAll('[data-consumer-nav]').forEach(el=>{el.hidden=!!window.taskPulaIsAdmin;});
+ menu.querySelectorAll('[data-guest-nav]').forEach(el=>{el.hidden=!!window.taskPulaHasSession;});
  if(bottomNav)bottomNav.hidden=!(window.taskPulaHasSession&&['tasks','progress','wallet','profile','dashboard','research','campaigns','growth','watch','circle'].includes(view));
  const hero=document.querySelector('.hero'),auth=$('authPanel'),app=$('appPanel'),admin=$('adminPanel'),circle=$('circlePage');
  [hero,auth,app,admin,circle].forEach(el=>{if(el)el.hidden=true;});
