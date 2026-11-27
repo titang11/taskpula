@@ -16,7 +16,7 @@ Deno.serve(async(req:Request)=>{
  if(typeof body.ad_id!=="string"||!["impression","click"].includes(String(body.event)))return respond({error:"Invalid ad event."},400);
  const viewableMs=body.event==="impression"?Number(body.viewable_ms):0;
  if(body.event==="impression"&&(!Number.isInteger(viewableMs)||viewableMs<1000||viewableMs>60000))return respond({error:"Banner was not viewable for long enough."},400);
- const ip=req.headers.get("cf-connecting-ip")||req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+ const ip=req.headers.get("cf-connecting-ip")||req.headers.get("x-real-ip")||req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
  if(!ip)return respond({error:"Visitor network identity unavailable."},400);
  const agent=req.headers.get("user-agent")||"unknown";
  const visitorHash=await visitorDigest(ip,agent,service);
