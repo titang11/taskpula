@@ -70,7 +70,7 @@
   }
   async function showApp() {
     $('authPanel').hidden = true; $('appPanel').hidden = false; window.taskPulaHasSession = true;
-    try { await loadData(); render(); window.taskPulaNavigate?.('tasks'); } catch (error) { toast(error.message || 'Could not load your account data.'); }
+    try { await loadData(); render(); window.taskPulaNavigate?.('dashboard'); } catch (error) { toast(error.message || 'Could not load your account data.'); }
   }
   function render() {
     $('balance').textContent = money(transactions.reduce((sum,item) => sum + Number(item.amount || 0),0));
