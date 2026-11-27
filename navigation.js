@@ -4,10 +4,10 @@ const $=id=>document.getElementById(id);
 const trigger=$('menuTrigger'),menu=$('commandMenu'),scrim=$('menuScrim'),close=$('menuClose');
 if(!trigger||!menu||!scrim)return;
 function show(view){
- const bottomNav=document.querySelector('.bottom');
  menu.querySelectorAll('[data-consumer-nav]').forEach(el=>{el.hidden=!!window.taskPulaIsAdmin;});
  menu.querySelectorAll('[data-guest-nav]').forEach(el=>{el.hidden=!!window.taskPulaHasSession;});
- if(bottomNav)bottomNav.hidden=!(window.taskPulaHasSession&&['tasks','progress','wallet','profile','dashboard','research','campaigns','growth','watch','circle'].includes(view));
+ menu.querySelectorAll('[data-dashboard-nav]').forEach(el=>{el.hidden=!window.taskPulaHasSession||!!window.taskPulaIsAdmin;});
+ menu.querySelectorAll('[data-client-nav]').forEach(el=>{el.hidden=!window.taskPulaIsAdmin;});
  const hero=document.querySelector('.hero'),auth=$('authPanel'),app=$('appPanel'),admin=$('adminPanel'),circle=$('circlePage');
  [hero,auth,app,admin,circle].forEach(el=>{if(el)el.hidden=true;});
  if(view==='home'){if(hero)hero.hidden=false;}
@@ -17,9 +17,8 @@ function show(view){
    if(!window.taskPulaHasSession||!app){if(auth)auth.hidden=false;const m=$('authMessage');if(m)m.textContent='Sign in to access your personal TaskPula workspace.';}
    else{app.hidden=false;const target=view==='dashboard'?'dashboard':view;const map={dashboard:'memberHomePage',tasks:'tasksPage',progress:'progressPage',wallet:'walletPage',profile:'profilePage',research:'researchPage',campaigns:'campaignsPage',growth:'growthPage',watch:'watchPage'};app.querySelectorAll('.member-page').forEach(page=>{page.hidden=page.id!==map[target];});}
  }
- else if(view==='admin'){const entry=$('adminEntry');if(entry&&!entry.hidden&&window.taskPulaIsAdmin&&admin){if(bottomNav)bottomNav.hidden=true;window.taskPulaOpenAdmin?.();}else{if(auth)auth.hidden=false;const m=$('authMessage');if(m)m.textContent='Admin access requires an authorized staff account.';}}
+ else if(view==='admin'){const entry=$('adminEntry');if(entry&&!entry.hidden&&window.taskPulaIsAdmin&&admin){window.taskPulaOpenAdmin?.();}else{if(auth)auth.hidden=false;const m=$('authMessage');if(m)m.textContent='Admin access requires an authorized staff account.';}}
  document.querySelectorAll('.command-item').forEach(b=>b.classList.toggle('selected',b.dataset.view===view));
- document.querySelectorAll('.bottom [data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));
  closeMenu();if(view==='watch')window.taskPulaLoadWatch?.();window.scrollTo({top:0,behavior:'smooth'});
 }
 function openMenu(){if(document.body.classList.contains('admin-mode'))return;menu.classList.add('open');scrim.hidden=false;trigger.setAttribute('aria-expanded','true');menu.setAttribute('aria-hidden','false');document.body.classList.add('menu-open');close.focus();}
@@ -28,7 +27,6 @@ trigger.addEventListener('click',openMenu);close.addEventListener('click',closeM
 menu.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.view)));
 document.querySelectorAll('[data-open-view]').forEach(link=>link.addEventListener('click',e=>{e.preventDefault();show(link.dataset.openView);}));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();});
-document.querySelectorAll('.bottom [data-nav]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.nav)));
 document.querySelectorAll('[data-module-link]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.moduleLink)));
 window.taskPulaNavigate=show;
 
