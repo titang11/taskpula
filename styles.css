@@ -432,3 +432,34 @@ body{background:radial-gradient(ellipse at 10% 0%,#e6edf2 0,transparent 38%),var
 .hero .ad-carousel{grid-column:1/-1;width:100%;margin:8px 0 0;min-height:110px}
 .hero .ad-slide-link{min-height:108px}
 @media(min-width:760px){.hero .ad-carousel{max-width:100%}}
+
+
+/* TaskPula 2026 experience refinement */
+:root{--tp-blue:#0b4c91;--tp-sky:#1687c5;--tp-gold:#e5b84e;--tp-ink:#123b55;--tp-glass:rgba(255,255,255,.82)}
+.taskpula-logo{display:block;width:min(205px,54vw);height:58px;object-fit:contain;object-position:left center;background:transparent!important;border:0!important;box-shadow:none!important}
+.brand{min-width:0}
+.menu-trigger{position:fixed!important;right:max(18px,calc((100vw - 760px)/2 + 18px))!important;bottom:calc(88px + env(safe-area-inset-bottom))!important;z-index:30!important;width:62px!important;height:62px!important;padding:5px!important;border:3px solid rgba(255,255,255,.96)!important;border-radius:50%!important;background:linear-gradient(145deg,#0b4c91,#1687c5)!important;box-shadow:0 10px 28px rgba(7,58,101,.30),0 0 0 1px rgba(11,76,145,.12)!important;display:grid!important;place-items:center!important;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease}
+.menu-trigger img{width:100%;height:100%;display:block;border-radius:50%;object-fit:cover;background:transparent}
+.menu-trigger:active{transform:scale(.94)}
+.menu-trigger[aria-expanded=true]{transform:rotate(90deg)}
+.command-menu{z-index:40;max-height:min(78vh,720px);overflow:auto;border:1px solid rgba(255,255,255,.7);box-shadow:0 24px 70px rgba(8,40,68,.24)}
+.command-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.command-item{min-width:0;transition:transform .16s ease,background .16s ease}
+.command-item:active{transform:scale(.98)}
+.command-item[hidden]{display:none!important}
+.menu-scrim{z-index:35}
+.bottom{z-index:8;padding-right:84px}
+.admin-mode .bottom,.admin-mode .menu-trigger{display:none!important}
+.admin-mode .admin-panel{margin-top:10px;min-height:calc(100vh - 24px);border-radius:24px;background:linear-gradient(180deg,#f7fbfe,#edf4f8);box-shadow:0 16px 48px rgba(15,55,82,.10)}
+.admin-mode .admin-top{margin:0 0 16px;border-radius:20px;background:radial-gradient(circle at 90% 10%,rgba(229,184,78,.24),transparent 32%),linear-gradient(125deg,#082f56,#0b5b97 68%,#1687c5);box-shadow:0 12px 28px rgba(7,57,98,.18)}
+.admin-mode .admin-tabs{padding-bottom:5px;scrollbar-width:thin}
+.admin-mode .admin-card,.admin-mode .admin-metric{box-shadow:0 7px 22px rgba(16,55,79,.055);border-color:#e1ebf0}
+.admin-mode .admin-btn{cursor:pointer;transition:transform .15s ease,filter .15s ease}
+.admin-mode .admin-btn:hover{filter:brightness(1.06)}
+.admin-mode .admin-btn:active{transform:translateY(1px)}
+.member-page-heading{padding:8px 2px 18px}
+.member-page-heading h2{letter-spacing:-.8px}
+.module-grid button,.module-card,.member-card,.wallet-page-card{box-shadow:0 8px 24px rgba(19,57,87,.055);border-color:#e0ebf0}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(22,135,197,.35);outline-offset:2px}
+@media(max-width:430px){.taskpula-logo{width:160px;height:50px}.menu-trigger{width:58px!important;height:58px!important;right:14px!important;bottom:calc(84px + env(safe-area-inset-bottom))!important}.command-grid{grid-template-columns:1fr}.bottom{padding-right:76px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
