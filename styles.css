@@ -465,3 +465,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 
 .ad-preview{margin-top:10px;min-height:94px;border:1px dashed #b8cad8;border-radius:13px;background:linear-gradient(145deg,#f3f8fb,#eaf2f7);display:grid;place-items:center;overflow:hidden;color:#71899b;font-size:11px;padding:10px}.ad-preview img{display:block;width:100%;max-height:190px;object-fit:contain;border-radius:9px}
+
+/* Keep all account-level navigation in the floating menu. */
+.admin-entry{display:none!important}
