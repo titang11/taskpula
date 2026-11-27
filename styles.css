@@ -474,3 +474,108 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .bottom{display:none!important}
 .menu-trigger{bottom:calc(20px + env(safe-area-inset-bottom))!important}
 @media(max-width:430px){.menu-trigger{bottom:calc(16px + env(safe-area-inset-bottom))!important}}
+
+
+/* Homepage sponsored banner: wide Facebook-cover proportion (2.63:1). */
+#adCarousel.ad-carousel{
+  display:block;
+  position:relative;
+  width:calc(100% - 32px);
+  max-width:none;
+  aspect-ratio:2.63 / 1;
+  min-height:0;
+  margin:14px auto 24px;
+  padding:0;
+  overflow:hidden;
+  border:1px solid rgba(15,55,85,.10);
+  border-radius:20px;
+  background:#e8eef5;
+  box-shadow:0 14px 32px rgba(15,55,85,.12);
+}
+#adCarousel.ad-carousel[hidden]{display:none!important}
+#adCarousel .ad-carousel-label{
+  position:absolute;
+  z-index:2;
+  top:10px;
+  left:12px;
+  padding:5px 9px;
+  border-radius:20px;
+  color:#fff;
+  background:rgba(8,35,59,.72);
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:1.2px;
+  pointer-events:none;
+}
+#adCarousel .ad-slide-link{
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  min-height:0;
+  overflow:hidden;
+  border-radius:inherit;
+  color:#fff;
+  text-decoration:none;
+  background:#123c73;
+}
+#adCarousel .ad-slide-link img{
+  display:block;
+  width:100%;
+  height:100%;
+  max-height:none;
+  object-fit:cover;
+  object-position:center;
+}
+#adCarousel .ad-slide-copy{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  padding:30px 130px 15px 16px;
+  color:#fff;
+  background:linear-gradient(0deg,rgba(5,22,39,.78),rgba(5,22,39,0));
+  text-shadow:0 1px 3px rgba(0,0,0,.35);
+}
+#adCarousel .ad-slide-copy b{font-size:clamp(13px,2.4vw,19px);line-height:1.2}
+#adCarousel .ad-slide-copy small{font-size:10px;opacity:.9}
+#adCarousel .ad-slide-cta{
+  position:absolute;
+  right:14px;
+  bottom:14px;
+  padding:8px 11px;
+  border:1px solid rgba(255,255,255,.55);
+  border-radius:20px;
+  color:#fff;
+  background:rgba(8,35,59,.52);
+  font-size:10px;
+  font-weight:800;
+  white-space:nowrap;
+}
+#adCarousel .ad-carousel-dots{
+  position:absolute;
+  z-index:3;
+  top:12px;
+  right:12px;
+  display:flex;
+  gap:5px;
+}
+#adCarousel .ad-carousel-dots span{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:rgba(255,255,255,.5);
+}
+#adCarousel .ad-carousel-dots span.active{background:#fff}
+@media(max-width:430px){
+  #adCarousel.ad-carousel{width:calc(100% - 24px);border-radius:15px;margin:10px auto 18px}
+  #adCarousel .ad-slide-copy{padding:24px 92px 10px 11px}
+  #adCarousel .ad-slide-copy small{font-size:9px}
+  #adCarousel .ad-slide-cta{right:9px;bottom:9px;padding:6px 8px;font-size:9px}
+  #adCarousel .ad-carousel-label{top:7px;left:8px;padding:4px 7px;font-size:8px}
+  #adCarousel .ad-carousel-dots{top:9px;right:9px}
+}
