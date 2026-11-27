@@ -44,5 +44,6 @@ document.querySelectorAll('[data-business-tab]').forEach(tab=>tab.addEventListen
 }));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();});
 document.querySelectorAll('.bottom [data-nav]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.nav)));
-document.querySelectorAll('[data-module-link]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.moduleLink)));\nwindow.taskPulaNavigate=show;
+document.querySelectorAll('[data-module-link]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.moduleLink)));
+window.taskPulaNavigate=show;
 })();
