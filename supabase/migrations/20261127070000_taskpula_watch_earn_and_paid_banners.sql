@@ -163,3 +163,48 @@ begin
 end $$;
 revoke all on function public.track_banner_ad_event(uuid,text) from public;
 grant execute on function public.track_banner_ad_event(uuid,text) to anon,authenticated;
+
+-- Follow-up hardening: allow one reward for each unique completed session,
+-- while enforcing a per-campaign daily limit for each member.
+alter table public.watch_views drop constraint if exists watch_views_campaign_id_user_id_key;
+drop policy if exists watch_campaigns_public_active on public.watch_campaigns;
+create policy watch_campaigns_public_active on public.watch_campaigns for select to authenticated using (
+ status='active' and funding_status='confirmed' and (starts_at is null or starts_at<=now()) and (ends_at is null or ends_at>now())
+);
+create or replace function public.watch_begin_session(p_campaign_id uuid,p_client_nonce text)
+returns jsonb language plpgsql security definer set search_path=public,auth as $$
+declare v_user uuid:=auth.uid(); v_campaign public.watch_campaigns%rowtype; v_session public.watch_sessions%rowtype; v_today integer;
+begin
+ if v_user is null then raise exception 'Sign in to watch sponsored videos.'; end if;
+ if p_client_nonce is null or length(p_client_nonce)<16 or length(p_client_nonce)>128 then raise exception 'Invalid viewing session request.'; end if;
+ select * into v_campaign from public.watch_campaigns where id=p_campaign_id for update;
+ if not found or v_campaign.status<>'active' or v_campaign.funding_status<>'confirmed' or (v_campaign.starts_at is not null and v_campaign.starts_at>now()) or (v_campaign.ends_at is not null and v_campaign.ends_at<=now()) then raise exception 'This video campaign is not available or its funding is not confirmed.'; end if;
+ select count(*) into v_today from public.watch_views where campaign_id=p_campaign_id and user_id=v_user and verified_at>=date_trunc('day',now());
+ if v_today>=v_campaign.daily_limit_per_user then raise exception 'You have reached today’s viewing limit for this campaign.'; end if;
+ if v_campaign.views_count>=v_campaign.max_views or v_campaign.spent_amount+v_campaign.reward_amount>v_campaign.funded_budget then raise exception 'This campaign has reached its reward limit.'; end if;
+ insert into public.watch_sessions(campaign_id,user_id,expires_at,client_nonce) values(p_campaign_id,v_user,now()+make_interval(secs=>v_campaign.duration_seconds+600),p_client_nonce) returning * into v_session;
+ return jsonb_build_object('session_id',v_session.id,'session_token',v_session.session_token,'duration_seconds',v_campaign.duration_seconds,'started_at',v_session.started_at);
+end $$;
+create or replace function public.watch_complete_session(p_session_id uuid,p_session_token uuid)
+returns jsonb language plpgsql security definer set search_path=public,auth as $$
+declare v_user uuid:=auth.uid(); v_session public.watch_sessions%rowtype; v_campaign public.watch_campaigns%rowtype; v_view public.watch_views%rowtype; v_today integer;
+begin
+ if v_user is null then raise exception 'Sign in to claim a reward.'; end if;
+ select * into v_session from public.watch_sessions where id=p_session_id and user_id=v_user for update;
+ if not found or v_session.session_token<>p_session_token then raise exception 'Viewing session could not be verified.'; end if;
+ if v_session.status<>'started' then raise exception 'This viewing session has already been used.'; end if;
+ select * into v_campaign from public.watch_campaigns where id=v_session.campaign_id;
+ if now()<v_session.started_at+make_interval(secs=>v_campaign.duration_seconds) or v_session.watched_seconds<v_campaign.duration_seconds then raise exception 'The video has not met its verified playback requirement yet.'; end if;
+ if now()>v_session.expires_at then update public.watch_sessions set status='expired' where id=p_session_id; raise exception 'Viewing session expired. Please start again.'; end if;
+ select * into v_campaign from public.watch_campaigns where id=v_session.campaign_id for update;
+ if not found or v_campaign.status<>'active' or v_campaign.funding_status<>'confirmed' then raise exception 'Campaign is no longer eligible for rewards.'; end if;
+ select count(*) into v_today from public.watch_views where campaign_id=v_campaign.id and user_id=v_user and verified_at>=date_trunc('day',now());
+ if v_today>=v_campaign.daily_limit_per_user then raise exception 'You have reached today’s viewing limit for this campaign.'; end if;
+ if v_campaign.views_count>=v_campaign.max_views or v_campaign.spent_amount+v_campaign.reward_amount>v_campaign.funded_budget then raise exception 'Campaign reward budget is exhausted.'; end if;
+ insert into public.watch_views(campaign_id,session_id,user_id,reward_amount) values(v_campaign.id,v_session.id,v_user,v_campaign.reward_amount) returning * into v_view;
+ update public.watch_campaigns set views_count=views_count+1,spent_amount=spent_amount+v_campaign.reward_amount,status=case when views_count+1>=max_views or spent_amount+v_campaign.reward_amount>=funded_budget then 'completed' else status end,updated_at=now() where id=v_campaign.id;
+ update public.watch_sessions set status='completed',completed_at=now() where id=v_session.id;
+ insert into public.wallet_transactions(user_id,amount,currency,transaction_type,reference_id,idempotency_key,description) values(v_user,v_campaign.reward_amount,'BWP','watch_reward',v_view.id,'watch-view:'||v_view.id::text,'Verified Watch & Earn: '||v_campaign.title);
+ insert into public.audit_events(actor_id,action,entity_type,entity_id,details) values(v_user,'watch_reward_issued','watch_view',v_view.id::text,jsonb_build_object('campaign_id',v_campaign.id,'amount',v_campaign.reward_amount,'session_id',v_session.id));
+ return jsonb_build_object('success',true,'reward_amount',v_campaign.reward_amount,'currency','BWP','view_id',v_view.id);
+end $$;
