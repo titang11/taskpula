@@ -8,7 +8,7 @@
   max-width:100vw;
   aspect-ratio:2.63 / 1;
   min-height:0;
-  margin:14px 0 24px;
+  margin:0 0 24px;
   padding:0;
   overflow:hidden;
   border:0;
@@ -62,6 +62,6 @@
 }
 #adCarousel .ad-carousel-dots span.active{background:#fff}
 @media(max-width:430px){
-  #adCarousel.ad-carousel{width:100vw;max-width:100vw;margin:10px 0 18px}
+  #adCarousel.ad-carousel{width:100vw;max-width:100vw;margin:0 0 18px}
   #adCarousel .ad-carousel-dots{top:8px;right:9px}
 }
